@@ -21,17 +21,16 @@ namespace McJoeAdmin.Cortex
 
             _serverInstance = pServer;
         }
-            
-        public Action<string> ConsoleOut;
 
-        private const string TEST_EXE = 
+        public Action<McMessage> ConsoleOut;
+
+        private const string TEST_EXE =
             @"..\..\..\DummyConsole\bin\Debug\DummyConsole.exe";
 
         public MinecraftServerManager(string pExe, string[] pArgs)
         {
             // TODO: Testing for now.
             _serverInstance = new McProcess(TEST_EXE, new string[0]);
-            StartServer();
         }
 
         public void StartServer()
@@ -40,7 +39,7 @@ namespace McJoeAdmin.Cortex
                 || IsRunning)
                 return;
 
-            _serverInstance.ReadOutputLine += (sender, e) => RaiseConsoleOut(e.Data);
+            _serverInstance.ReadOutputLine += (sender, e) => RouteMessage(new McMessage(e.Data, McMessageOrigin.ServerEngine));
             _serverInstance.Start();
         }
 
@@ -53,18 +52,54 @@ namespace McJoeAdmin.Cortex
             }
         }
 
-        private void RaiseConsoleOut(string pLine)
+        private void RouteMessage(McMessage pMessage)
         {
-            if (ConsoleOut != null)
-                ConsoleOut(pLine);
+            switch (pMessage.Origin)
+            {
+                case McMessageOrigin.ServerEngine:
+                    ConsoleOut(pMessage);
+                    break;
+                case McMessageOrigin.AdminRule:
+                case McMessageOrigin.AdminView:
+                    if (_serverInstance == null)
+                        return;
+
+                    _serverInstance.WriteInputLine(pMessage.Data);
+                    break;
+            }
         }
 
-        public void SendConsoleInput(string pLine)
+        private void FromServerEngine(string pLine)
         {
+            var mcMessage = new McMessage(pLine, McMessageOrigin.ServerEngine);
+
+            RaiseConsoleOut(mcMessage);
+        }
+
+        private void FromAdminView(string pLine)
+        {
+            var mcMessage = new McMessage(pLine, McMessageOrigin.AdminView);
+
             if (_serverInstance == null)
                 return;
 
             _serverInstance.WriteInputLine(pLine);
+        }
+
+        private void FromAdminRules(string pLine)
+        {
+
+        }
+
+        private void RaiseConsoleOut(McMessage pMessage)
+        {
+            if (ConsoleOut != null)
+                ConsoleOut(pMessage);
+        }
+
+        public void SendConsoleInput(string pLine)
+        {
+            RouteMessage(new McMessage(pLine, McMessageOrigin.AdminView));
         }
 
         public void Shutdown()

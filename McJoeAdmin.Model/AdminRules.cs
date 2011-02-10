@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace McJoeAdmin.Model
 {
-    public enum McMessageOrigin
+    public class AdminRules
     {
-        ServerEngine,
-        AdminView,
-        AdminRule
     }
 }

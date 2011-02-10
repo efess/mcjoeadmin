@@ -37,7 +37,7 @@ namespace McJoeAdmin.ViewManager
             _serverManager.ConsoleOut = WriteToConsoleOutput;
         }
 
-        private void WriteToConsoleOutput(string pNewLine)
+        private void WriteToConsoleOutput(McMessage pMessage)
         {
 
             if (_currentLines > _logMaxLines)
@@ -51,7 +51,7 @@ namespace McJoeAdmin.ViewManager
                 _currentLines++;
             }
 
-            _outputLog.AppendLine(pNewLine);
+            _outputLog.AppendLine(pMessage.Data);
 
             _view.OutputConsoleText(_outputLog.ToString());
         }        

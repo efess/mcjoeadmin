@@ -25,7 +25,7 @@ namespace McJoeAdmin.Cortex
         public Action<McMessage> ConsoleOut;
 
         private const string TEST_EXE =
-            @"..\..\..\DummyConsole\bin\Debug\DummyConsole.exe";
+            @"DummyConsole.exe";
 
         public MinecraftServerManager(string pExe, string[] pArgs)
         {

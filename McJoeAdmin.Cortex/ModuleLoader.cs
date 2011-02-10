@@ -8,9 +8,9 @@ using System.IO;
 
 namespace McJoeAdmin.Cortex
 {
-    public static class ModuleLoader
+    internal static class ModuleLoader
     {
-        public static List<ModuleAssemblyInstance> LoadModules()
+        internal static List<ModuleAssemblyInstance> LoadModules()
         {
             var moduleList = new List<ModuleAssemblyInstance>();
 

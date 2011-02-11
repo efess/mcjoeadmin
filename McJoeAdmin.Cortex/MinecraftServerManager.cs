@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using McJoeAdmin.Minecraft;
 using McJoeAdmin.Model;
+using System.Reflection;
+using System.IO;
 
 namespace McJoeAdmin.Cortex
 {
@@ -13,6 +15,7 @@ namespace McJoeAdmin.Cortex
     public class MinecraftServerManager
     {
         private IMcServer _serverInstance;
+        private ModuleManager _moduleManager;
 
         public MinecraftServerManager(IMcServer pServer)
         {
@@ -20,6 +23,7 @@ namespace McJoeAdmin.Cortex
                 throw new ArgumentNullException("pMinecraft");
 
             _serverInstance = pServer;
+            _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location));
         }
 
         public Action<McMessage> ConsoleOut;
@@ -31,6 +35,7 @@ namespace McJoeAdmin.Cortex
         {
             // TODO: Testing for now.
             _serverInstance = new McProcess(TEST_EXE, new string[0]);
+            _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location));
         }
 
         public void StartServer()

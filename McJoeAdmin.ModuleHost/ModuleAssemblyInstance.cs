@@ -5,7 +5,7 @@ using System.Text;
 using System.Reflection;
 using McJoeAdmin.Model;
 
-namespace McJoeAdmin.Cortex
+namespace McJoeAdmin.ModuleHost
 {
     internal class ModuleAssemblyInstance
     {

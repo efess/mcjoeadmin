@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using McJoeAdmin.Model;
+using McJoeAdmin.Model.Events;
 
 namespace McJoeAdmin.Minecraft
 {
@@ -12,7 +13,7 @@ namespace McJoeAdmin.Minecraft
     /// </summary>
     public class McProcess : IMcServer, IDisposable
     {
-        public event LineOutputEventHandler ReadOutputLine;
+        public event McMessageEventHandler ReadOutputLine;
 
         private const int KILL_WAIT_TIMEOUT_MS = 5000;
 
@@ -101,7 +102,9 @@ namespace McJoeAdmin.Minecraft
             if (!IsRunning)
                 return;
             if (ReadOutputLine != null)
-                ReadOutputLine(this, new LineOutputEventArgs(pData));
+                ReadOutputLine(this, 
+                    new McMessageEventArgs(
+                        McLogParser.Parse(pData)));
         }
 
         public void WriteInputLine(string pData)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using McJoeAdmin.Model.Events;
 
 namespace McJoeAdmin.Model
 {
@@ -11,7 +12,7 @@ namespace McJoeAdmin.Model
         void Close();
         bool IsRunning { get; }
         void WriteInputLine(string pData);
-        event LineOutputEventHandler ReadOutputLine;
+        event McMessageEventHandler ReadOutputLine;
         long CurrentMemoryUsage { get; }
     }
 }

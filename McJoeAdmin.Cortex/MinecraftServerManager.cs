@@ -47,7 +47,7 @@ namespace McJoeAdmin.Cortex
                 || IsRunning)
                 return;
 
-            _serverInstance.ReadOutputLine += (sender, e) => RouteMessage(new McMessage(e.Data, McMessageOrigin.ServerEngine));
+            _serverInstance.ReadOutputLine += (sender, e) => RouteMessage(e.Message);
             _serverInstance.Start();
         }
 
@@ -76,37 +76,9 @@ namespace McJoeAdmin.Cortex
             ConsoleOut(pMessage);
         }
 
-        private void FromServerEngine(string pLine)
-        {
-            var mcMessage = new McMessage(pLine, McMessageOrigin.ServerEngine);
-
-            RaiseConsoleOut(mcMessage);
-        }
-
-        private void FromAdminView(string pLine)
-        {
-            var mcMessage = new McMessage(pLine, McMessageOrigin.AdminView);
-
-            if (_serverInstance == null)
-                return;
-
-            _serverInstance.WriteInputLine(pLine);
-        }
-
-        private void FromAdminRules(string pLine)
-        {
-            RouteMessage(new McMessage(pLine, McMessageOrigin.AdminRule));
-        }
-
-        private void RaiseConsoleOut(McMessage pMessage)
-        {
-            if (ConsoleOut != null)
-                ConsoleOut(pMessage);
-        }
-
         public void SendConsoleInput(string pLine)
         {
-            RouteMessage(new McMessage(pLine, McMessageOrigin.AdminView));
+            RouteMessage(new McMessage(pLine, McMessageOrigin.AdminView, "View", DateTime.Now));
         }
 
         public void Shutdown()

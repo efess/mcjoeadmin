@@ -17,9 +17,13 @@ namespace DummyConsole
                 var check = Console.ReadLine();
 
                 //Console.WriteLine(check);
+                switch (check.TrimEnd(new char[] {' ','\n', '\r'}).ToUpper())
+                {
+                    case "LIST":
+                        Console.WriteLine(GetMcDateTimeNow() + " [INFO] Connected players: AngryRhetoric, efess");
+                        break;
 
-                if (check.ToUpper().Contains("ERROR"))
-                    new Action(OutputError).BeginInvoke(null, null);
+                }
             }
         }
 
@@ -32,9 +36,46 @@ namespace DummyConsole
         {
             while (true)
             {
-                Console.WriteLine("Outputing something... the time is " + DateTime.Now.ToString("HH:mm"));
+                string str = RandomMinecraftString();
+                if(str != null)
+                    Console.WriteLine(str);
                 System.Threading.Thread.Sleep(5000);
             }
         }
+
+        private static string RandomMinecraftString()
+        {
+            Random rand = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
+            
+            int number = rand.Next(0, 20);
+
+            switch (number)
+            {
+                case 0:
+                    return GetMcDateTimeNow() + " [INFO] <efess> Lol message";
+
+                case 2:
+                    return GetMcDateTimeNow() + " [INFO] <efess> !players";
+
+                case 3:
+                    return GetMcDateTimeNow() + " [INFO] <efess> !memory";
+                case 4:
+                    return GetMcDateTimeNow() + " [INFO] <efess> !lol";
+                case 5:
+                    return GetMcDateTimeNow() + " [WARNING] Can't keep up! Did the system time change, or is the server overloaded?";
+
+                case 6:
+                    return GetMcDateTimeNow() + " [INFO] efess [/69.119.8.191:49613] logged in with entity id 3732147";
+                case 7:
+                    return GetMcDateTimeNow() + " [INFO] <efess> !coffee";
+            }
+            return null;
+        }
+
+        private static string GetMcDateTimeNow()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
     }
 }

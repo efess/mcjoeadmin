@@ -33,6 +33,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,8 +45,11 @@
     <Compile Include="AdminRules.cs" />
     <Compile Include="Events\LineOutputEventArgs.cs" />
     <Compile Include="Events\LineOutputEventHandler.cs" />
+    <Compile Include="Events\McMessageEventArgs.cs" />
+    <Compile Include="Events\McMessageEventHandler.cs" />
     <Compile Include="IMcAdminModule.cs" />
     <Compile Include="IMcServer.cs" />
+    <Compile Include="IModuleManager.cs" />
     <Compile Include="IView.cs" />
     <Compile Include="McMessage.cs" />
     <Compile Include="McMessageOrigin.cs" />

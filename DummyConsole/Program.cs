@@ -16,7 +16,7 @@ namespace DummyConsole
             {
                 var check = Console.ReadLine();
 
-                Console.WriteLine(check);
+                //Console.WriteLine(check);
 
                 if (check.ToUpper().Contains("ERROR"))
                     new Action(OutputError).BeginInvoke(null, null);

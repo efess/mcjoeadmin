@@ -23,7 +23,8 @@ namespace McJoeAdmin.Cortex
                 throw new ArgumentNullException("pMinecraft");
 
             _serverInstance = pServer;
-            _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location));
+            _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location),
+                (mcm) => RouteMessage(mcm));
         }
 
         public Action<McMessage> ConsoleOut;
@@ -35,7 +36,9 @@ namespace McJoeAdmin.Cortex
         {
             // TODO: Testing for now.
             _serverInstance = new McProcess(TEST_EXE, new string[0]);
-            _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location));
+            _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location),
+                (mcm) => RouteMessage(mcm));
+            
         }
 
         public void StartServer()
@@ -62,16 +65,15 @@ namespace McJoeAdmin.Cortex
             switch (pMessage.Origin)
             {
                 case McMessageOrigin.ServerEngine:
-                    ConsoleOut(pMessage);
+                    _moduleManager.SendMessageToModuleHost(pMessage);
                     break;
                 case McMessageOrigin.AdminRule:
                 case McMessageOrigin.AdminView:
-                    if (_serverInstance == null)
-                        return;
-
-                    _serverInstance.WriteInputLine(pMessage.Data);
+                    if (_serverInstance != null)
+                        _serverInstance.WriteInputLine(pMessage.Data);
                     break;
             }
+            ConsoleOut(pMessage);
         }
 
         private void FromServerEngine(string pLine)
@@ -93,7 +95,7 @@ namespace McJoeAdmin.Cortex
 
         private void FromAdminRules(string pLine)
         {
-
+            RouteMessage(new McMessage(pLine, McMessageOrigin.AdminRule));
         }
 
         private void RaiseConsoleOut(McMessage pMessage)

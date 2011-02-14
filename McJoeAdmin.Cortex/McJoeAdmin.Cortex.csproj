@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,6 +55,10 @@
     <ProjectReference Include="..\McJoeAdmin.Model\McJoeAdmin.Model.csproj">
       <Project>{D0D243E6-C32F-4F9C-886E-1D3436DB3F00}</Project>
       <Name>McJoeAdmin.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\McJoeAdmin.ModuleHost\McJoeAdmin.ModuleHost.csproj">
+      <Project>{EB9395D8-0D59-4F50-90BF-46502F5C96C3}</Project>
+      <Name>McJoeAdmin.ModuleHost</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

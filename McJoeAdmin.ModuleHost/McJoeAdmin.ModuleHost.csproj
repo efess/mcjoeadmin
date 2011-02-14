@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="ModuleAssemblyInstance.cs" />
     <Compile Include="ModuleCollection.cs" />
-    <Compile Include="ModuleHost.cs" />
+    <Compile Include="ModuleLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteAgent.cs" />
   </ItemGroup>

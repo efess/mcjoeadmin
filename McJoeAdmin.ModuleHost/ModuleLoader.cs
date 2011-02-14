@@ -4,19 +4,26 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using McJoeAdmin.Model;
+using McJoeAdmin.Model.Events;
 
 namespace McJoeAdmin.ModuleHost
 {
-    public class ModuleHost
+    public class ModuleLoader : MarshalByRefObject
     {
         private ModuleCollection _currentLoadedModules;
 
-        public ModuleHost()
+        //public ModuleHost(Action<McMessage> pMessageOutPipe)
+        public ModuleLoader()
         {
+            //if (pMessageOutPipe == null)
+            //    throw new ArgumentNullException("pMessageOutPipe");
+            
+            //_messageOut = pMessageOutPipe;
             _currentLoadedModules = new ModuleCollection();
         }
 
-        internal void TryLoadModule(string pPath)
+
+        public void TryLoadModule(string pPath)
         {
             //var moduleAssemblyInstance new ModuleAssemblyInstance(Assembly.LoadFile(pPath));
 
@@ -32,7 +39,8 @@ namespace McJoeAdmin.ModuleHost
                 if (types.FirstOrDefault((type) => adminModuleType.IsAssignableFrom(type)
                                              && !type.IsInterface && !type.IsAbstract) != null)
                 {
-                    _currentLoadedModules.Add(new ModuleAssemblyInstance(assembly));
+                    var instance = new ModuleAssemblyInstance(assembly);
+                    _currentLoadedModules.Add(instance);
                 }
             }
         }

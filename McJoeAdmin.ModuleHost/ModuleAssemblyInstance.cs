@@ -48,9 +48,9 @@ namespace McJoeAdmin.ModuleHost
             }
         }
 
-        public IEnumerator<IMcAdminModule> AdminMoudles()
+        public IEnumerable<IMcAdminModule> AdminModules()
         {
-            return _adminModules.GetEnumerator();
+            return _adminModules;
         }
     }
 }

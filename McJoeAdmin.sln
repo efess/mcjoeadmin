@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DummyConsole", "DummyConsol
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McJoeAdmin.Cortex", "McJoeAdmin.Cortex\McJoeAdmin.Cortex.csproj", "{34EE9DC0-8660-4C62-B872-DB90AB0BCD81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McJoeAdmin.BasicAdminRulesModule", "McJoeAdmin.BasicAdminRulesModule\McJoeAdmin.BasicAdminRulesModule.csproj", "{D80B8185-CC7B-42D7-9C7B-B5DC0BC3B2FE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McJoeAdmin.ModuleHost", "McJoeAdmin.ModuleHost\McJoeAdmin.ModuleHost.csproj", "{EB9395D8-0D59-4F50-90BF-46502F5C96C3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McJoeAdmin.RandomOneLiners", "McJoeAdmin.RandomOneLiners\McJoeAdmin.RandomOneLiners.csproj", "{20701719-23D2-4FC8-8D60-6422995D8634}"
@@ -22,6 +20,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "McJoeAdmin.Modules", "McJoeAdmin.Modules", "{5349ECF3-0488-4F47-9A90-D19DAA3AE70B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McJoeAdmin.RandomOneLiners", "McJoeAdmin.Modules\McJoeAdmin.RandomOneLiners\McJoeAdmin.RandomOneLiners.csproj", "{2C9A9185-0E41-481C-B723-3CCAA6985F9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McJoeAdmin.DefaultAdminModule", "McJoeAdmin.Modules\McJoeAdmin.DefaultAdminModule\McJoeAdmin.DefaultAdminModule.csproj", "{67B8CF90-FB0A-4B7B-9F2E-48A8CA9DB898}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,16 +93,6 @@ Global
 		{34EE9DC0-8660-4C62-B872-DB90AB0BCD81}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{34EE9DC0-8660-4C62-B872-DB90AB0BCD81}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{34EE9DC0-8660-4C62-B872-DB90AB0BCD81}.Release|x86.ActiveCfg = Release|Any CPU
-		{D80B8185-CC7B-42D7-9C7B-B5DC0BC3B2FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D80B8185-CC7B-42D7-9C7B-B5DC0BC3B2FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D80B8185-CC7B-42D7-9C7B-B5DC0BC3B2FE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{D80B8185-CC7B-42D7-9C7B-B5DC0BC3B2FE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{D80B8185-CC7B-42D7-9C7B-B5DC0BC3B2FE}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D80B8185-CC7B-42D7-9C7B-B5DC0BC3B2FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D80B8185-CC7B-42D7-9C7B-B5DC0BC3B2FE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D80B8185-CC7B-42D7-9C7B-B5DC0BC3B2FE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{D80B8185-CC7B-42D7-9C7B-B5DC0BC3B2FE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{D80B8185-CC7B-42D7-9C7B-B5DC0BC3B2FE}.Release|x86.ActiveCfg = Release|Any CPU
 		{EB9395D8-0D59-4F50-90BF-46502F5C96C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EB9395D8-0D59-4F50-90BF-46502F5C96C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB9395D8-0D59-4F50-90BF-46502F5C96C3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -133,11 +123,22 @@ Global
 		{2C9A9185-0E41-481C-B723-3CCAA6985F9F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2C9A9185-0E41-481C-B723-3CCAA6985F9F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2C9A9185-0E41-481C-B723-3CCAA6985F9F}.Release|x86.ActiveCfg = Release|Any CPU
+		{67B8CF90-FB0A-4B7B-9F2E-48A8CA9DB898}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67B8CF90-FB0A-4B7B-9F2E-48A8CA9DB898}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67B8CF90-FB0A-4B7B-9F2E-48A8CA9DB898}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{67B8CF90-FB0A-4B7B-9F2E-48A8CA9DB898}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{67B8CF90-FB0A-4B7B-9F2E-48A8CA9DB898}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{67B8CF90-FB0A-4B7B-9F2E-48A8CA9DB898}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67B8CF90-FB0A-4B7B-9F2E-48A8CA9DB898}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67B8CF90-FB0A-4B7B-9F2E-48A8CA9DB898}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{67B8CF90-FB0A-4B7B-9F2E-48A8CA9DB898}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{67B8CF90-FB0A-4B7B-9F2E-48A8CA9DB898}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2C9A9185-0E41-481C-B723-3CCAA6985F9F} = {5349ECF3-0488-4F47-9A90-D19DAA3AE70B}
+		{67B8CF90-FB0A-4B7B-9F2E-48A8CA9DB898} = {5349ECF3-0488-4F47-9A90-D19DAA3AE70B}
 	EndGlobalSection
 EndGlobal

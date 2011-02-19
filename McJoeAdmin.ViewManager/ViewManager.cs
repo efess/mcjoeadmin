@@ -39,21 +39,23 @@ namespace McJoeAdmin.ViewManager
 
         private void WriteToConsoleOutput(McMessage pMessage)
         {
-
-            if (_currentLines > _logMaxLines)
+            lock (_outputLog)
             {
-                string currentLog = _outputLog.ToString();
-                _outputLog.Remove(0, currentLog.IndexOf(Environment.NewLine) + Environment.NewLine.Length);
-                _currentLines = _logMaxLines;
-            }
-            else 
-            {
-                _currentLines++;
-            }
+                if (_currentLines > _logMaxLines)
+                {
+                    string currentLog = _outputLog.ToString();
+                    _outputLog.Remove(0, currentLog.IndexOf(Environment.NewLine) + Environment.NewLine.Length);
+                    _currentLines = _logMaxLines;
+                }
+                else
+                {
+                    _currentLines++;
+                }
 
-            _outputLog.AppendLine(pMessage.Data);
+                _outputLog.AppendLine(pMessage.Data);
 
-            _view.OutputConsoleText(_outputLog.ToString());
+                _view.OutputConsoleText(_outputLog.ToString());
+            }
         }        
     }
 }

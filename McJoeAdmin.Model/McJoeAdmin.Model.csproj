@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminRules.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Events\LineOutputEventArgs.cs" />
     <Compile Include="Events\LineOutputEventHandler.cs" />
     <Compile Include="Events\McMessageEventArgs.cs" />

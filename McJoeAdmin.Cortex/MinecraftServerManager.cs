@@ -14,6 +14,8 @@ namespace McJoeAdmin.Cortex
     /// </summary>
     public class MinecraftServerManager
     {
+        private const int WAIT_PERIOD_SHUTDOWN = 5000;
+
         private IMcServer _serverInstance;
         private ModuleManager _moduleManager;
 
@@ -35,7 +37,7 @@ namespace McJoeAdmin.Cortex
         public MinecraftServerManager(string pExe, string[] pArgs)
         {
             // TODO: Testing for now.
-            _serverInstance = new McProcess(TEST_EXE, new string[0]);
+            _serverInstance = new McProcess(pExe, pArgs);
             _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location),
                 (mcm) => RouteMessage(mcm));
             
@@ -64,11 +66,11 @@ namespace McJoeAdmin.Cortex
         {
             switch (pMessage.Origin)
             {
-                case McMessageOrigin.ServerEngine:
+                case McMessageOrigin.ServerProcess:
                     _moduleManager.SendMessageToModuleHost(pMessage);
                     break;
-                case McMessageOrigin.AdminRule:
-                case McMessageOrigin.AdminView:
+                case McMessageOrigin.Module:
+                case McMessageOrigin.View:
                     if (_serverInstance != null)
                         _serverInstance.WriteInputLine(pMessage.Data);
                     break;
@@ -78,7 +80,7 @@ namespace McJoeAdmin.Cortex
 
         public void SendConsoleInput(string pLine)
         {
-            RouteMessage(new McMessage(pLine, McMessageOrigin.AdminView, "View", DateTime.Now));
+            RouteMessage(new McMessage(pLine, McMessageOrigin.View, "View", DateTime.Now));
         }
 
         public void Shutdown()
@@ -87,6 +89,16 @@ namespace McJoeAdmin.Cortex
                 || !IsRunning)
                 return;
 
+            // Allow modules to send last minute messages before forcing shutdown
+            // IE. saving world
+            _moduleManager.SendMessageToModuleHost(new McMessage(Constants.SPECIAL_MESSAGE_DATA_SHUTDOWN,
+                McMessageOrigin.ServerManager,
+                Constants.SPECIAL_MESSAGE_TYPE,
+                DateTime.Now));
+
+
+            System.Threading.Thread.Sleep(WAIT_PERIOD_SHUTDOWN);
+                
             _serverInstance.Close();
         }
     }

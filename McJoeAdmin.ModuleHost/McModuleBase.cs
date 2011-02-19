@@ -10,6 +10,7 @@ namespace McJoeAdmin.ModuleHost
 {
     public abstract class McModuleBase : IMcAdminModule
     {
+        private const int WCF_RETRY = 3;
         public McModuleBase()
         {
             ConnectToHost();
@@ -22,7 +23,7 @@ namespace McJoeAdmin.ModuleHost
 
         protected virtual void SendMessage(string pMessage)
         {
-            _hostProxy.MessageOut(new McMessage(pMessage, McMessageOrigin.AdminRule, this.GetType().Name, DateTime.Now));
+            _hostProxy.MessageOut(new McMessage(pMessage, McMessageOrigin.Module, this.GetType().Name, DateTime.Now));
         }
 
         protected virtual Tuple<string, string> ReturnPlayerAndData(string pData)
@@ -45,8 +46,32 @@ namespace McJoeAdmin.ModuleHost
                      new EndpointAddress(
                         "net.pipe://localhost/Pipe"));
 
+            int retryTimes = 0;
+            bool needsRetry = false;
+            Exception ex = null;
             _hostProxy = pipeFactory.CreateChannel();
-            _hostProxy.Subscribe();
+
+            do
+            {
+                try
+                {
+                    _hostProxy.Subscribe();
+                    needsRetry = false;
+                }
+                catch(Exception e)
+                {
+                    ex = e;
+                    needsRetry = true;
+                }
+            }
+            while (needsRetry && ++retryTimes < WCF_RETRY);
+
+            if (needsRetry &&
+                ex != null)
+            {
+                throw ex;
+            }
+
         }
     }
 }

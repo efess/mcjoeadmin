@@ -27,7 +27,7 @@ namespace McJoeAdmin.Minecraft
 
             }catch{}
 
-            return new McMessage(data, McMessageOrigin.ServerEngine, messageType, dateObject);
+            return new McMessage(data, McMessageOrigin.ServerProcess, messageType, dateObject);
         }
     }
 }

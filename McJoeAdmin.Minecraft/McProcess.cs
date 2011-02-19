@@ -124,12 +124,11 @@ namespace McJoeAdmin.Minecraft
         {
             if(pDisposeProperly)
                 Close();
-
-            Dispose();
         }
 
         public void Dispose()
         {
+            System.IO.File.Create("D:\\BIN\\DISPOSED.TXT");
             Dispose(true);
         }
     }

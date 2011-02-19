@@ -51,6 +51,8 @@ namespace McJoeAdmin
         private void SetTextToTextbox(string pText, TextBox textBox)
         {
             textBox.Text = pText;
+            textBox.SelectionStart = textBox.TextLength;
+            textBox.ScrollToCaret();
         }
 
         private void HandleFormTryingToClose(FormClosingEventArgs pFormClosingEventArgs)
@@ -63,6 +65,8 @@ namespace McJoeAdmin
                     pFormClosingEventArgs.Cancel = true;
                     return;
                 }
+
+            _shutdownServer();
 
             _isFormClosing = true;
         }

@@ -12,6 +12,9 @@ namespace McJoeAdmin.ViewManager
     /// </summary>
     public class ViewManager
     {
+        private const int UPDATE_TIMER_DEFAULT = 1000;
+
+        private System.Timers.Timer _timer;
         private StringBuilder _outputLog;
         private int _currentLines = 0;
         private int _logMaxLines = 500;
@@ -24,8 +27,21 @@ namespace McJoeAdmin.ViewManager
             _serverManager = pServerManager;
             _view = pView;
             _outputLog = new StringBuilder();
+            _timer = new System.Timers.Timer(UPDATE_TIMER_DEFAULT);
+            _timer.Elapsed += (sender, e) => UpdateView();
+            _timer.Enabled = true;
 
             HookupEvents();
+        }
+
+        private void SetUpdateTimer(int pTimerInterval)
+        {
+            _timer.Interval = pTimerInterval;
+        }
+
+        private void UpdateView()
+        {
+            _view.ServerInformation(_serverManager.GetServerInformation());
         }
 
         private void HookupEvents()
@@ -34,6 +50,7 @@ namespace McJoeAdmin.ViewManager
             _view.IsRunning = () => _serverManager.IsRunning;
             _view.ShutdownServer = _serverManager.Shutdown;
             _view.StartServer = _serverManager.StartServer;
+            _view.SetUpdateInterval = SetUpdateTimer;
             _serverManager.ConsoleOut = WriteToConsoleOutput;
         }
 

@@ -9,6 +9,7 @@ namespace McJoeAdmin
     public class StartupConfig
     {
         private const string MINECRAFT_EXECUTABLE_APP_KEY = "mc_exe";
+        private const string MINECRAFT_STARTUP_FOLDER_APP_KEY = "mc_startup_folder";
         private const string MINECRAFT_ARGUMENTS_APP_KEY = "mc_arg{0}";
 
         public static string MinecraftExecutable
@@ -27,6 +28,25 @@ namespace McJoeAdmin
                 }
              
                 return "DummyConsole.EXE";
+            }
+        }
+
+        public static string MinecraftStartupFolder
+        {
+            get
+            {
+                try
+                {
+                    var strt = ConfigurationManager.AppSettings[MINECRAFT_STARTUP_FOLDER_APP_KEY];
+                    if (!string.IsNullOrEmpty(strt))
+                        return strt;
+                }
+                catch (ConfigurationErrorsException)
+                {
+                    // ignore.
+                }
+
+                return "";
             }
         }
 

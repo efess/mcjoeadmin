@@ -8,10 +8,12 @@ namespace McJoeAdmin.Model
     public interface IView
     {
         void OutputConsoleText(string pOutput);
+        void ServerInformation(ServerInformation pServerInformation);
+
         Action<string> InputText {  set; }
         Action StartServer { set; }
         Action ShutdownServer { set; }
         Func<bool> IsRunning { set; }
-        Func<long> MemoryUsed { set; }
+        Action<int> SetUpdateInterval { set; }
     }
 }

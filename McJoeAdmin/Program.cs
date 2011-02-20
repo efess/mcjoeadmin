@@ -19,7 +19,7 @@ namespace McJoeAdmin
             
             var mainForm = new Main();
 
-            var serverManager = new MinecraftServerManager(StartupConfig.MinecraftExecutable, StartupConfig.MinecraftArguments);
+            var serverManager = new MinecraftServerManager(StartupConfig.MinecraftExecutable, StartupConfig.MinecraftArguments, StartupConfig.MinecraftStartupFolder);
             var viewManager = new ViewManager.ViewManager(mainForm, serverManager);
             serverManager.StartServer();
 

@@ -18,13 +18,15 @@ namespace McJoeAdmin.Cortex
         private const string DLL_MODULE_HOST = "McJoeAdmin.ModuleHost";
         private const string MODULE_HOST_TYPE = "ModuleHost";
         private static string HOST_URI = "net.pipe://localhost";
+
         private static FileSystemWatcher _fileSystemWatcher;
         private static ModuleManager _instance;
         private AppDomain _moduleAppDomain;
-        private ModuleHost.ModuleLoader _moduleHost;
+        private ModuleHost.ModuleLoader _moduleLoader;
         private ServiceHost _serviceHost;
         private ManualResetEvent _shutdownServer = new ManualResetEvent(false);
 
+        private string _wcfNamedPipe;
         private Action<McMessage> _messageOut;
         private string _searchPath = string.Empty;
 
@@ -32,6 +34,8 @@ namespace McJoeAdmin.Cortex
         {
             _searchPath = pPath;
             _messageOut = pMessageOut;
+            _wcfNamedPipe = new Random().Next(10000, 99999).ToString();
+
             LoadServer();
 
             InitializeModuleDomain();
@@ -40,6 +44,7 @@ namespace McJoeAdmin.Cortex
             _fileSystemWatcher = new FileSystemWatcher(pPath, DLL_EXTENSION_FILTER);
             _fileSystemWatcher.Created += (sender, e) => AssemblyCreated(e.FullPath);
             _fileSystemWatcher.Deleted += (sender, e) => AssemblyDeleted(e.FullPath);
+            _fileSystemWatcher.Changed += (sender, e) => AssemblyDeleted(e.FullPath);
             _fileSystemWatcher.EnableRaisingEvents = true;
         }
 
@@ -77,20 +82,32 @@ namespace McJoeAdmin.Cortex
 
         internal void InitializeModuleDomain()
         {
-            _moduleAppDomain = AppDomain.CreateDomain("Modules");
-            _moduleAppDomain.Load(DLL_MODULE_HOST);
+            AppDomainSetup ads = new AppDomainSetup();
+            ads.ShadowCopyFiles = "true"; // In order to prevent local locking of DLL files
+            _moduleAppDomain = AppDomain.CreateDomain("Modules", null, ads);
             BindingFlags flags = (BindingFlags.Public | BindingFlags.CreateInstance |
 			       BindingFlags.Instance);
 
             var messageOut = new Action<McMessage>((mcm) => _messageOut(mcm));
 
-            _moduleHost = _moduleAppDomain.CreateInstanceAndUnwrap(DLL_MODULE_HOST, "McJoeAdmin.ModuleHost.ModuleLoader", false, flags,
-                null, null, null, null) as ModuleHost.ModuleLoader;
+            _moduleLoader = _moduleAppDomain.CreateInstanceAndUnwrap(
+                DLL_MODULE_HOST, 
+                "McJoeAdmin.ModuleHost.ModuleLoader", 
+                false, 
+                flags,
+                null, 
+                new object[]{_wcfNamedPipe}, 
+                null, 
+                null) as ModuleHost.ModuleLoader;
         }
         
         internal void LoadAllModules()
         {
-            foreach (string str in Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), DLL_EXTENSION_FILTER))
+            foreach (string str in Directory.GetFiles(
+                Path.GetDirectoryName(
+                    Assembly.GetExecutingAssembly().Location
+                )
+                , DLL_EXTENSION_FILTER))
             {
                 LoadModule(str);
             }
@@ -98,7 +115,7 @@ namespace McJoeAdmin.Cortex
 
         private void LoadModule(string str)
         {
-            _moduleHost.TryLoadModule(str);
+            _moduleLoader.TryLoadModule(str);
         }
 
 
@@ -122,12 +139,12 @@ namespace McJoeAdmin.Cortex
             {
                 _serviceHost = new ServiceHost(this,
                     new Uri[]{
-                            new Uri(HOST_URI)
+                            new Uri(new Uri(HOST_URI), _wcfNamedPipe)
                     });
 
                 _serviceHost.AddServiceEndpoint(typeof(IModuleManager),
                     new NetNamedPipeBinding(),
-                    "Pipe");
+                    new Uri(new Uri(HOST_URI), _wcfNamedPipe));
 
                 _serviceHost.Open();
                 _shutdownServer.WaitOne();

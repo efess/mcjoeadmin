@@ -14,5 +14,7 @@ namespace McJoeAdmin.Model
         void WriteInputLine(string pData);
         event McMessageEventHandler ReadOutputLine;
         long CurrentMemoryUsage { get; }
+        float CurrentCpuUsage { get; }
+        string StartupString { get; }
     }
 }

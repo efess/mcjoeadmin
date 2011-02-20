@@ -21,27 +21,35 @@ namespace McJoeAdmin.Minecraft
         private string[] _arguments;
         private Process _process;
 
+        private string _startupArguments;
+        private string _startupFolder;
+
+        private double _lastCpuMilliseconds;
+
         private bool disposedProperly;
 
-        public McProcess(string pExePath, string[] pArguments)
+        public McProcess(string pExePath, string[] pArguments, string pStartupFolder)
         {
             _exePath = pExePath;
             _arguments = pArguments;
+            _startupFolder = pStartupFolder;
+            _startupArguments = FormatArguments();
         }
 
         public void Start()
         {
             if(IsRunning)
                 return;
-
+            
             _process = new Process();
-            _process.StartInfo = new ProcessStartInfo(_exePath, FormatArguments())
+            _process.StartInfo = new ProcessStartInfo(_exePath, _startupArguments)
                 {
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     CreateNoWindow = true,
                     ErrorDialog = false,
+                    WorkingDirectory = _startupFolder,
                     UseShellExecute = false
                 };
             _process.OutputDataReceived += (sender, e) =>  ProcessOutputLine(e.Data, false);
@@ -66,6 +74,8 @@ namespace McJoeAdmin.Minecraft
             _process = null;
         }
 
+        public string StartupString { get { return _exePath + " " + _startupArguments; } }
+
         public long CurrentMemoryUsage
         {
             get
@@ -73,6 +83,18 @@ namespace McJoeAdmin.Minecraft
                 if (!IsRunning)
                     return 0L;
                 return _process.PrivateMemorySize64;
+            }
+        }
+
+        public float CurrentCpuUsage
+        {
+            get
+            {
+                if (!IsRunning)
+                    return 0f;
+                
+                // TODO: I have more important things right now...
+                return 0.0f;
             }
         }
 
@@ -111,6 +133,7 @@ namespace McJoeAdmin.Minecraft
         {
             if (!IsRunning)
                 return;
+            Console.WriteLine(pData);
 
             _process.StandardInput.WriteLine(pData);
         }

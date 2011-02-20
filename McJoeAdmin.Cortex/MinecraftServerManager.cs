@@ -34,10 +34,10 @@ namespace McJoeAdmin.Cortex
         private const string TEST_EXE =
             @"DummyConsole.exe";
 
-        public MinecraftServerManager(string pExe, string[] pArgs)
+        public MinecraftServerManager(string pExe, string[] pArgs, string pStartupFolder)
         {
             // TODO: Testing for now.
-            _serverInstance = new McProcess(pExe, pArgs);
+            _serverInstance = new McProcess(pExe, pArgs, pStartupFolder);
             _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location),
                 (mcm) => RouteMessage(mcm));
             
@@ -101,5 +101,14 @@ namespace McJoeAdmin.Cortex
                 
             _serverInstance.Close();
         }
+
+        public ServerInformation GetServerInformation()
+        {
+            return new ServerInformation(
+                (_serverInstance.CurrentMemoryUsage / 1048576).ToString(),
+                _serverInstance.CurrentCpuUsage.ToString(),
+                _serverInstance.StartupString);
+        }
+
     }
 }

@@ -11,14 +11,11 @@ namespace McJoeAdmin.ModuleHost
     public class ModuleLoader : MarshalByRefObject
     {
         private ModuleCollection _currentLoadedModules;
+        private string _wcfNamedPipe;
 
-        //public ModuleHost(Action<McMessage> pMessageOutPipe)
-        public ModuleLoader()
+        public ModuleLoader(string pWcfNamedPipe)
         {
-            //if (pMessageOutPipe == null)
-            //    throw new ArgumentNullException("pMessageOutPipe");
-            
-            //_messageOut = pMessageOutPipe;
+            _wcfNamedPipe = pWcfNamedPipe;
             _currentLoadedModules = new ModuleCollection();
         }
 
@@ -40,6 +37,7 @@ namespace McJoeAdmin.ModuleHost
                                              && !type.IsInterface && !type.IsAbstract) != null)
                 {
                     var instance = new ModuleAssemblyInstance(assembly);
+                    foreach (var mod in instance.AdminModules()) { mod.ConnectToLocalhost(_wcfNamedPipe); }
                     _currentLoadedModules.Add(instance);
                 }
             }

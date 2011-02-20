@@ -27,6 +27,11 @@ namespace McJoeAdmin
             ShutdownServer = null;
             IsRunning = null;
             MemoryUsed = null;
+            SetUpdateInterval = null;
+
+            lblStartString.Text = string.Empty;
+            lblMemoryUsage.Text = string.Empty;
+            lblCpuUsage.Text = string.Empty;
 
             _formUpdateTimer = new Timer();
             _formUpdateTimer.Interval = REFRESH_TIME_INTERVAL;
@@ -43,9 +48,34 @@ namespace McJoeAdmin
             if (_isFormClosing) return;
 
             if (txtConsoleOutput.InvokeRequired)
-                this.Invoke(new Action<string, TextBox>((str, txtbx) => SetTextToTextbox(str, txtbx)), pText, txtConsoleOutput);
+                try
+                {
+                    this.Invoke(new Action<string, TextBox>((str, txtbx) => SetTextToTextbox(str, txtbx)), pText, txtConsoleOutput);
+                }
+                catch { }
             else
                 SetTextToTextbox(pText, txtConsoleOutput);
+        }
+
+        private void SetServerInformation(ServerInformation pServerInformation)
+        {
+            if (_isFormClosing) return;
+
+            if (txtConsoleOutput.InvokeRequired)
+                try
+                {
+                    this.Invoke(new Action<ServerInformation>((srvr) => SetServerInformationToPanel(srvr)), pServerInformation);
+                }
+                catch { }
+            else
+                SetServerInformationToPanel(pServerInformation);
+        }
+
+        private void SetServerInformationToPanel(ServerInformation pServerInformation)
+        {
+            lblCpuUsage.Text = pServerInformation.CpuUsage;
+            lblMemoryUsage.Text = pServerInformation.MemoryUsage;
+            lblStartString.Text = pServerInformation.StartupString;
         }
 
         private void SetTextToTextbox(string pText, TextBox textBox)
@@ -76,6 +106,11 @@ namespace McJoeAdmin
             WriteConsoleOutputLine(pText);
         }
 
+        public void ServerInformation(ServerInformation pServerInformation)
+        {
+            SetServerInformation(pServerInformation);
+        }
+
         private bool PopupYesNoQuestionMessage(string pText)
         {
             return MessageBox.Show(this, pText, "lolQuestion", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
@@ -101,6 +136,18 @@ namespace McJoeAdmin
 
             _inputText(txtConsoleInput.Text);
             txtConsoleInput.Text = string.Empty;
+        }
+
+        private Action<int> _setUpdateInterval;
+        public Action<int> SetUpdateInterval
+        {
+            set
+            {
+                if (value == null)
+                    _setUpdateInterval = (interval) => { };
+                else
+                    _setUpdateInterval = value;
+            }
         }
 
         private Action<string> _inputText;

@@ -38,6 +38,15 @@ namespace McJoeAdmin.DefaultAdminModule
 
         private McMessage ProcessMessage(McMessage pMessage)
         {
+            if (pMessage.Type == Constants.SPECIAL_MESSAGE_TYPE)
+            {
+                if(pMessage.Data == Constants.SPECIAL_MESSAGE_DATA_SHUTDOWN)
+                {
+                    SendMessage("save-all");
+                    SendMessage("stop");
+                }
+                return null;
+            }
             var data = ReturnPlayerAndData(pMessage.Data);
             if (pMessage.Data.Contains("Connected players: "))
             {
@@ -48,6 +57,27 @@ namespace McJoeAdmin.DefaultAdminModule
             {
                 SendPlayerList(data.Item1);
             }
+            else if (!string.IsNullOrEmpty(data.Item1)
+                && data.Item2.ToUpper() == "!DERP")
+            {
+                SendMessage("say Derpy derp. De derp de duttidy da, derpy derpy doo.");
+            }
+            else if (!string.IsNullOrEmpty(data.Item1)
+                && data.Item2.ToUpper() == "!NIGGER")
+            {
+                SendMessage("say A fully grown niglet");
+            }
+            else if (!string.IsNullOrEmpty(data.Item1)
+                && data.Item2.ToUpper() == "!BOOBS")
+            {
+                SendMessage("say Things that guys like to play with");
+            }
+            else if (!string.IsNullOrEmpty(data.Item1)
+                && data.Item2.ToUpper() == "!WATSON")
+            {
+                SendMessage("tell efess That fucker is smart.");
+            }
+
             return null;
         }
 
@@ -69,7 +99,7 @@ namespace McJoeAdmin.DefaultAdminModule
 
             for(int i = 0; i < _currentPlayers.Count; i++)
             {
-                SendMessage("tell " + pPlayer + i + " " + _currentPlayers[i]);
+                SendMessage("tell " + pPlayer + " " + i + " " + _currentPlayers[i]);
             }
         }
 

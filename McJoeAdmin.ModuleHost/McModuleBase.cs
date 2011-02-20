@@ -11,9 +11,12 @@ namespace McJoeAdmin.ModuleHost
     public abstract class McModuleBase : IMcAdminModule
     {
         private const int WCF_RETRY = 3;
+        private string _pipe;
+        private bool _isConnected;
+
         public McModuleBase()
         {
-            ConnectToHost();
+            _isConnected = false;
         }
 
         public abstract void SetAdminRules(AdminRules pRules);
@@ -23,7 +26,8 @@ namespace McJoeAdmin.ModuleHost
 
         protected virtual void SendMessage(string pMessage)
         {
-            _hostProxy.MessageOut(new McMessage(pMessage, McMessageOrigin.Module, this.GetType().Name, DateTime.Now));
+            if(_isConnected)
+                _hostProxy.MessageOut(new McMessage(pMessage, McMessageOrigin.Module, this.GetType().Name, DateTime.Now));
         }
 
         protected virtual Tuple<string, string> ReturnPlayerAndData(string pData)
@@ -38,25 +42,31 @@ namespace McJoeAdmin.ModuleHost
             return new Tuple<string, string>(null, pData);
         }
 
+        public void ConnectToLocalhost(string pPipe)
+        {
+            _pipe = pPipe;
+            ConnectToHost();
+        }
+
         private void ConnectToHost()
         {
             DuplexChannelFactory<IModuleManager> pipeFactory =
                 new DuplexChannelFactory<IModuleManager>(this,
                      new NetNamedPipeBinding(),
                      new EndpointAddress(
-                        "net.pipe://localhost/Pipe"));
+                        "net.pipe://localhost/" + _pipe));
 
             int retryTimes = 0;
             bool needsRetry = false;
             Exception ex = null;
-            _hostProxy = pipeFactory.CreateChannel();
 
             do
             {
                 try
                 {
+                    _hostProxy = pipeFactory.CreateChannel();
                     _hostProxy.Subscribe();
-                    needsRetry = false;
+                    _isConnected = true;
                 }
                 catch(Exception e)
                 {
@@ -66,7 +76,7 @@ namespace McJoeAdmin.ModuleHost
             }
             while (needsRetry && ++retryTimes < WCF_RETRY);
 
-            if (needsRetry &&
+            if (!_isConnected &&
                 ex != null)
             {
                 throw ex;

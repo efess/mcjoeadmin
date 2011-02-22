@@ -32,7 +32,6 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.txtConsoleOutput = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.txtConsoleInput = new System.Windows.Forms.TextBox();
             this.btnSendInput = new System.Windows.Forms.Button();
@@ -45,6 +44,11 @@
             this.lblMemoryUsage = new System.Windows.Forms.Label();
             this.lblCpuUsage = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.gridConsoleOut = new System.Windows.Forms.DataGridView();
+            this.colDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colOrigin = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colData = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -54,6 +58,7 @@
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridConsoleOut)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -64,7 +69,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(556, 502);
+            this.tabControl1.Size = new System.Drawing.Size(764, 502);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -73,7 +78,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(548, 476);
+            this.tabPage1.Size = new System.Drawing.Size(756, 476);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Server Status";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -92,31 +97,21 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.groupBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(542, 470);
+            this.splitContainer1.Size = new System.Drawing.Size(750, 470);
             this.splitContainer1.SplitterDistance = 180;
             this.splitContainer1.TabIndex = 0;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.txtConsoleOutput);
+            this.groupBox1.Controls.Add(this.gridConsoleOut);
             this.groupBox1.Controls.Add(this.panel1);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(542, 286);
+            this.groupBox1.Size = new System.Drawing.Size(750, 286);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Console";
-            // 
-            // txtConsoleOutput
-            // 
-            this.txtConsoleOutput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtConsoleOutput.Location = new System.Drawing.Point(3, 16);
-            this.txtConsoleOutput.Multiline = true;
-            this.txtConsoleOutput.Name = "txtConsoleOutput";
-            this.txtConsoleOutput.ReadOnly = true;
-            this.txtConsoleOutput.Size = new System.Drawing.Size(536, 235);
-            this.txtConsoleOutput.TabIndex = 0;
             // 
             // panel1
             // 
@@ -125,7 +120,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(3, 251);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(536, 32);
+            this.panel1.Size = new System.Drawing.Size(744, 32);
             this.panel1.TabIndex = 1;
             // 
             // txtConsoleInput
@@ -166,7 +161,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 103);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(542, 77);
+            this.groupBox2.Size = new System.Drawing.Size(750, 77);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Server Information";
@@ -234,11 +229,59 @@
             this.label4.TabIndex = 5;
             this.label4.Text = "Cpu Usage";
             // 
+            // gridConsoleOut
+            // 
+            this.gridConsoleOut.AllowUserToAddRows = false;
+            this.gridConsoleOut.AllowUserToDeleteRows = false;
+            this.gridConsoleOut.AllowUserToResizeRows = false;
+            this.gridConsoleOut.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridConsoleOut.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colDate,
+            this.colOrigin,
+            this.colType,
+            this.colData});
+            this.gridConsoleOut.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridConsoleOut.Location = new System.Drawing.Point(3, 16);
+            this.gridConsoleOut.Name = "gridConsoleOut";
+            this.gridConsoleOut.ReadOnly = true;
+            this.gridConsoleOut.RowHeadersVisible = false;
+            this.gridConsoleOut.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.gridConsoleOut.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridConsoleOut.ShowEditingIcon = false;
+            this.gridConsoleOut.Size = new System.Drawing.Size(744, 235);
+            this.gridConsoleOut.TabIndex = 2;
+            // 
+            // colDate
+            // 
+            this.colDate.HeaderText = "Timestamp";
+            this.colDate.Name = "colDate";
+            this.colDate.ReadOnly = true;
+            this.colDate.Width = 150;
+            // 
+            // colOrigin
+            // 
+            this.colOrigin.HeaderText = "Origin";
+            this.colOrigin.Name = "colOrigin";
+            this.colOrigin.ReadOnly = true;
+            // 
+            // colType
+            // 
+            this.colType.HeaderText = "Type";
+            this.colType.Name = "colType";
+            this.colType.ReadOnly = true;
+            // 
+            // colData
+            // 
+            this.colData.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colData.HeaderText = "Data";
+            this.colData.Name = "colData";
+            this.colData.ReadOnly = true;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(556, 502);
+            this.ClientSize = new System.Drawing.Size(764, 502);
             this.Controls.Add(this.tabControl1);
             this.Name = "Main";
             this.Text = "McJoeAdmin";
@@ -249,11 +292,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridConsoleOut)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -264,7 +307,6 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TextBox txtConsoleOutput;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox txtConsoleInput;
         private System.Windows.Forms.Button btnSendInput;
@@ -277,6 +319,11 @@
         private System.Windows.Forms.Label lblMemory;
         private System.Windows.Forms.Label lblCpuUsage;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.DataGridView gridConsoleOut;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colDate;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colOrigin;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colType;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colData;
     }
 }
 

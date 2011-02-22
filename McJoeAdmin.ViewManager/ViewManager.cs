@@ -15,9 +15,6 @@ namespace McJoeAdmin.ViewManager
         private const int UPDATE_TIMER_DEFAULT = 1000;
 
         private System.Timers.Timer _timer;
-        private StringBuilder _outputLog;
-        private int _currentLines = 0;
-        private int _logMaxLines = 500;
 
         private IView _view;
         private MinecraftServerManager _serverManager;
@@ -26,7 +23,6 @@ namespace McJoeAdmin.ViewManager
         {
             _serverManager = pServerManager;
             _view = pView;
-            _outputLog = new StringBuilder();
             _timer = new System.Timers.Timer(UPDATE_TIMER_DEFAULT);
             _timer.Elapsed += (sender, e) => UpdateView();
             _timer.Enabled = true;
@@ -56,23 +52,7 @@ namespace McJoeAdmin.ViewManager
 
         private void WriteToConsoleOutput(McMessage pMessage)
         {
-            lock (_outputLog)
-            {
-                if (_currentLines > _logMaxLines)
-                {
-                    string currentLog = _outputLog.ToString();
-                    _outputLog.Remove(0, currentLog.IndexOf(Environment.NewLine) + Environment.NewLine.Length);
-                    _currentLines = _logMaxLines;
-                }
-                else
-                {
-                    _currentLines++;
-                }
-
-                _outputLog.AppendLine(pMessage.Data);
-
-                _view.OutputConsoleText(_outputLog.ToString());
-            }
+            _view.OutputConsoleText(pMessage);
         }        
     }
 }

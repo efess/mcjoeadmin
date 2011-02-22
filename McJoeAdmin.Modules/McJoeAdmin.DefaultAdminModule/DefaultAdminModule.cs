@@ -9,19 +9,12 @@ namespace McJoeAdmin.DefaultAdminModule
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant)]
     public class DefaultAdminModule : McModuleBase
     {
-        private const int STATE_REFRESH_PERIOD = 5000;
-
         // State vars
         private List<string> _currentPlayers;
-
-        private Timer _timer = new Timer(STATE_REFRESH_PERIOD);
 
         public DefaultAdminModule()
         {
             _currentPlayers = new List<string>();
-            _timer.Elapsed += (sender, e) => RefreshState();
-
-            _timer.Enabled = true;
         }
 
         // IMcAdminModule Implementation
@@ -48,34 +41,36 @@ namespace McJoeAdmin.DefaultAdminModule
                 return null;
             }
             var data = ReturnPlayerAndData(pMessage.Data);
-            if (pMessage.Data.Contains("Connected players: "))
+            if (data.Item1 == null)
             {
-                ParsePlayers(pMessage.Data.Remove(0,19));
+                // Not a player message
+                if (pMessage.Data.Contains("Connected players: "))
+                {
+                    ParsePlayers(pMessage.Data.Remove(0, 19));
+                }
+                else if (pMessage.Data.Contains("lost connection:")
+                    || pMessage.Data.Contains("logged in with"))
+                {
+                    SendMessage("list");
+                }
             }
-            else if (!string.IsNullOrEmpty(data.Item1)
-                && data.Item2.ToUpper() == "!PLAYERS")
+            else
             {
-                SendPlayerList(data.Item1);
-            }
-            else if (!string.IsNullOrEmpty(data.Item1)
-                && data.Item2.ToUpper() == "!DERP")
-            {
-                SendMessage("say Derpy derp. De derp de duttidy da, derpy derpy doo.");
-            }
-            else if (!string.IsNullOrEmpty(data.Item1)
-                && data.Item2.ToUpper() == "!NIGGER")
-            {
-                SendMessage("say A fully grown niglet");
-            }
-            else if (!string.IsNullOrEmpty(data.Item1)
-                && data.Item2.ToUpper() == "!BOOBS")
-            {
-                SendMessage("say Things that guys like to play with");
-            }
-            else if (!string.IsNullOrEmpty(data.Item1)
-                && data.Item2.ToUpper() == "!WATSON")
-            {
-                SendMessage("tell efess That fucker is smart.");
+                switch (data.Item2.ToUpper())
+                {
+                    case "!PLAYERS":
+                        SendPlayerList(data.Item1);
+                        break;
+                    case "!DERP":
+                        SendMessage("say Derpy derp. De derp de duttidy da, derpy derpy doo.");
+                        break;
+                    case "!NIGGER":
+                        SendMessage("say A fully grown niglet");
+                        break;
+                    case "!BOOBS":
+                        SendMessage("sa Things that guys like to play with");
+                        break;
+                }
             }
 
             return null;

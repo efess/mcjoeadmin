@@ -7,7 +7,7 @@ namespace McJoeAdmin.Model
 {
     public interface IView
     {
-        void OutputConsoleText(string pOutput);
+        void OutputConsoleText(McMessage pOutput);
         void ServerInformation(ServerInformation pServerInformation);
 
         Action<string> InputText {  set; }

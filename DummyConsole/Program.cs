@@ -37,8 +37,20 @@ namespace DummyConsole
             while (true)
             {
                 string str = RandomMinecraftString();
-                if(str != null)
+
+                if (str != null)
+                {
                     Console.WriteLine(str);
+                    if (str == "SPIN")
+                    {
+
+                        string str2 = string.Empty;
+                        for (int i = 0; i < 5000000; i++)
+                        {
+                            str2 += i % 24234324234;
+                        }
+                    }
+                }
                 System.Threading.Thread.Sleep(5000);
             }
         }
@@ -47,7 +59,7 @@ namespace DummyConsole
         {
             Random rand = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
             
-            int number = rand.Next(0, 20);
+            int number = rand.Next(8, 12);
 
             switch (number)
             {
@@ -68,6 +80,14 @@ namespace DummyConsole
                     return GetMcDateTimeNow() + " [INFO] efess [/69.119.8.191:49613] logged in with entity id 3732147";
                 case 7:
                     return GetMcDateTimeNow() + " [INFO] <efess> !coffee";
+                case 8:
+                    return GetMcDateTimeNow() + " [INFO] Disconnecting redux06790 [/69.119.8.191:49714]: Took too long to log in";
+                case 9:
+                    return GetMcDateTimeNow() + " [INFO] redux06790 lost connection: disconnect.quitting";
+                case 10:
+                    return GetMcDateTimeNow() + " [INFO] redux06790 lost connection: disconnect.quitting";
+                case 11:
+                    return GetMcDateTimeNow() + " [INFO] efess [/69.119.7.235:31007] logged in with entity id 1";
             }
             return null;
         }

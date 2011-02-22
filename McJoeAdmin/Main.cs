@@ -7,19 +7,23 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using McJoeAdmin.Model;
+using System.Threading;
+using System.Reflection;
 
 namespace McJoeAdmin
 {
     public partial class Main : Form, IView
     {
         private bool _isFormClosing;
-        private Timer _formUpdateTimer;
-
-        private const int REFRESH_TIME_INTERVAL = 1000;
-
+        private Queue<object> _updateQueue;
+        private Action _updateQueueConsumerDelegate;
+        private bool _scrollAtBottom = true;
         public Main()
         {
+
             InitializeComponent();
+            _updateQueueConsumerDelegate = new Action(ProcessUpdateQueue);
+            _updateQueue = new Queue<object>();
 
             // Initialize implemented delegates
             InputText = null;
@@ -33,56 +37,57 @@ namespace McJoeAdmin
             lblMemoryUsage.Text = string.Empty;
             lblCpuUsage.Text = string.Empty;
 
-            _formUpdateTimer = new Timer();
-            _formUpdateTimer.Interval = REFRESH_TIME_INTERVAL;
-
             FormClosing += (sender, e) => HandleFormTryingToClose(e);
 
             btnSendInput.Click += (sender, e) => SendInput();
 
-            _formUpdateTimer.Tick += (sender, e) => RefreshScreen();
+
+            Type t = gridConsoleOut.GetType();
+            PropertyInfo pi = t.GetProperty("VerticalScrollBar", BindingFlags.Instance | BindingFlags.NonPublic);
+            ScrollBar s = null;
+
+            if (pi != null)
+                s = pi.GetValue(gridConsoleOut, null) as ScrollBar;
+
+            if (s != null)
+            {
+                s.Scroll += (sender, e) => HandleScroll(e);
+            }
+
+            //_formUpdateTimer.Tick += (sender, e) => RefreshScreen();
+            //_formUpdateTimer.Enabled = true;
         }
 
-        private void WriteConsoleOutputLine(string pText)
+        private void HandleScroll(ScrollEventArgs e)
         {
-            if (_isFormClosing) return;
+            if (e.Type == ScrollEventType.Last)
+            {
+                _scrollAtBottom = true;
 
-            if (txtConsoleOutput.InvokeRequired)
-                try
-                {
-                    this.Invoke(new Action<string, TextBox>((str, txtbx) => SetTextToTextbox(str, txtbx)), pText, txtConsoleOutput);
-                }
-                catch { }
-            else
-                SetTextToTextbox(pText, txtConsoleOutput);
-        }
-
-        private void SetServerInformation(ServerInformation pServerInformation)
-        {
-            if (_isFormClosing) return;
-
-            if (txtConsoleOutput.InvokeRequired)
-                try
-                {
-                    this.Invoke(new Action<ServerInformation>((srvr) => SetServerInformationToPanel(srvr)), pServerInformation);
-                }
-                catch { }
-            else
-                SetServerInformationToPanel(pServerInformation);
+            }
+            else if(e.NewValue < e.OldValue)
+                _scrollAtBottom = true;
         }
 
         private void SetServerInformationToPanel(ServerInformation pServerInformation)
         {
-            lblCpuUsage.Text = pServerInformation.CpuUsage;
-            lblMemoryUsage.Text = pServerInformation.MemoryUsage;
+            lblCpuUsage.Text = pServerInformation.CpuUsage + "%";
+            lblMemoryUsage.Text = pServerInformation.MemoryUsage + "MB";
             lblStartString.Text = pServerInformation.StartupString;
         }
 
-        private void SetTextToTextbox(string pText, TextBox textBox)
+        private void SetTextToTextbox(McMessage pMessage)
         {
-            textBox.Text = pText;
-            textBox.SelectionStart = textBox.TextLength;
-            textBox.ScrollToCaret();
+            if (gridConsoleOut.Rows.Count > 30)
+            {
+                gridConsoleOut.Rows.RemoveAt(0);
+            }
+            gridConsoleOut.Rows.Add(pMessage.Date.ToString("MM/dd/yyyy HH:mm:ss"),
+                pMessage.Origin.ToString(),
+                pMessage.Type,
+                pMessage.Data);
+
+            gridConsoleOut.FirstDisplayedScrollingRowIndex = gridConsoleOut.Rows.Count - 1;
         }
 
         private void HandleFormTryingToClose(FormClosingEventArgs pFormClosingEventArgs)
@@ -101,14 +106,26 @@ namespace McJoeAdmin
             _isFormClosing = true;
         }
 
-        public void OutputConsoleText(string pText)
+        public void OutputConsoleText(McMessage pMessage)
         {
-            WriteConsoleOutputLine(pText);
+            lock (_updateQueue)
+                _updateQueue.Enqueue(pMessage);
+            
+            //if(InvokeRequired)
+            //    this.Invoke(_updateQueueConsumerDelegate);
+            //else
+            //    ProcessUpdateQueue();
         }
 
         public void ServerInformation(ServerInformation pServerInformation)
         {
-            SetServerInformation(pServerInformation);
+            lock (_updateQueue)
+                _updateQueue.Enqueue(pServerInformation);
+            
+            //if(InvokeRequired)
+            //    this.Invoke(_updateQueueConsumerDelegate);
+            //else
+            //    ProcessUpdateQueue();
         }
 
         private bool PopupYesNoQuestionMessage(string pText)
@@ -120,9 +137,32 @@ namespace McJoeAdmin
         {
             MessageBox.Show(this, pText, "lolInfo", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
-        private void RefreshScreen()
+        protected override void WndProc(ref Message m)
         {
+            base.WndProc(ref m);
+
+            ProcessUpdateQueue();
+        }
+        private void ProcessUpdateQueue()
+        {
+            if (InvokeRequired) return;
+
+            lock (_updateQueue)
+            {
+                while (_updateQueue.Count > 0)
+                {
+                    var update = _updateQueue.Dequeue();
+
+                    try // Do NOT throw an exception
+                    {
+                        if (update is ServerInformation)
+                            SetServerInformationToPanel(update as ServerInformation);
+                        else if (update is McMessage)
+                            SetTextToTextbox(update as McMessage);
+                    }
+                    catch (Exception ex) { }
+                }
+            }
         }
 
         //IStatusView Implementation

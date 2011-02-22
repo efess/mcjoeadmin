@@ -13,6 +13,9 @@ namespace McJoeAdmin.Minecraft
     /// </summary>
     public class McProcess : IMcServer, IDisposable
     {
+        private PerformanceCounter memoryCounter;
+        private PerformanceCounter cpuCounter;
+
         public event McMessageEventHandler ReadOutputLine;
 
         private const int KILL_WAIT_TIMEOUT_MS = 5000;
@@ -60,6 +63,16 @@ namespace McJoeAdmin.Minecraft
 
             _process.BeginErrorReadLine();
             _process.BeginOutputReadLine();
+
+            memoryCounter = new PerformanceCounter(
+                "Process",
+                "Working Set - Private",
+                _process.ProcessName);
+
+              cpuCounter = new PerformanceCounter(
+                "Process",
+                "% Processor Time",
+                _process.ProcessName);
         }
 
         public void Close()
@@ -80,9 +93,10 @@ namespace McJoeAdmin.Minecraft
         {
             get
             {
-                if (!IsRunning)
+                if (!IsRunning
+                    || memoryCounter == null)
                     return 0L;
-                return _process.PrivateMemorySize64;
+                return Convert.ToInt64(memoryCounter.NextValue());
             }
         }
 
@@ -90,11 +104,10 @@ namespace McJoeAdmin.Minecraft
         {
             get
             {
-                if (!IsRunning)
+                if (!IsRunning
+                    || cpuCounter == null)
                     return 0f;
-                
-                // TODO: I have more important things right now...
-                return 0.0f;
+                return cpuCounter.NextValue();
             }
         }
 
@@ -151,7 +164,6 @@ namespace McJoeAdmin.Minecraft
 
         public void Dispose()
         {
-            System.IO.File.Create("D:\\BIN\\DISPOSED.TXT");
             Dispose(true);
         }
     }

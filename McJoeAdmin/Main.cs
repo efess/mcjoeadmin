@@ -152,7 +152,10 @@ namespace McJoeAdmin
             lock (_updateQueue)
             {
                 int updates = 0;
-                while (_updateQueue.Count > 0)
+                lblStatus.Text = "Processing updates..";
+
+                while (_updateQueue.Count > 0
+                    || updates > 1000)
                 {
                     var update = _updateQueue.Dequeue();
 
@@ -160,9 +163,6 @@ namespace McJoeAdmin
                     {
                         updates++;
 
-                        if (updates > 100)
-                            return;
-                        lblStatus.Text = "Processing updates..";
 
                         if (update is ServerInformation)
                             SetServerInformationToPanel(update as ServerInformation);
@@ -170,11 +170,9 @@ namespace McJoeAdmin
                             SetTextToTextbox(update as McMessage);
                     }
                     catch (Exception ex) { }
-                    finally
-                    {
-                        lblStatus.Text = string.Empty;
-                    }
                 }
+
+                lblStatus.Text = string.Empty;
             }
         }
 

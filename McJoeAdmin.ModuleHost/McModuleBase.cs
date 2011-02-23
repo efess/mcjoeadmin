@@ -52,7 +52,13 @@ namespace McJoeAdmin.ModuleHost
         {
             DuplexChannelFactory<IModuleManager> pipeFactory =
                 new DuplexChannelFactory<IModuleManager>(this,
-                     new NetNamedPipeBinding(),
+                     new NetNamedPipeBinding()
+                     {
+                         CloseTimeout = new TimeSpan(0,0,30),
+                         OpenTimeout = new TimeSpan(0,0,30),
+                         ReceiveTimeout = TimeSpan.MaxValue,
+                         SendTimeout = new TimeSpan(0,0,30)
+                     },
                      new EndpointAddress(
                         "net.pipe://localhost/" + _pipe));
 
@@ -66,6 +72,7 @@ namespace McJoeAdmin.ModuleHost
                 {
                     _hostProxy = pipeFactory.CreateChannel();
                     _hostProxy.Subscribe();
+                    
                     _isConnected = true;
                 }
                 catch(Exception e)

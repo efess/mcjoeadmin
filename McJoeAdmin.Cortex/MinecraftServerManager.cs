@@ -75,7 +75,8 @@ namespace McJoeAdmin.Cortex
                         _serverInstance.WriteInputLine(pMessage.Data);
                     break;
             }
-            ConsoleOut(pMessage);
+            if(ConsoleOut != null)
+                ConsoleOut(pMessage);
         }
 
         public void SendConsoleInput(string pLine)

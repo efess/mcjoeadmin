@@ -72,12 +72,30 @@ namespace McJoeAdmin.Cortex
         public void SendMessageToModuleHost(McMessage pMessage)
         {
             lock(_modules)
-                foreach (var module in _modules)
+                for(int i = _modules.Count - 1; i >= 0; i--)
                 {
+                    var module = _modules[i];
+
+                    if (((ICommunicationObject)module).State == CommunicationState.Closed)
+                    {
+                        _messageOut(new McMessage(
+                            string.Format("Module was in {0} State, ReOpening",
+                                ((ICommunicationObject)module).State.ToString()),
+                                McMessageOrigin.Module, "INFO", DateTime.Now));
+
+                        ((ICommunicationObject)module).Open();
+                    }
+
                     if (((ICommunicationObject)module).State == CommunicationState.Opened)
                         module.MessageIn(pMessage);
                     else
-                        _modules.Remove(module);
+                    {
+                        _messageOut(new McMessage(
+                            string.Format("Module was in {0} State, unloading",
+                                ((ICommunicationObject)module).State.ToString()),
+                                McMessageOrigin.Module, "ERROR",DateTime.Now));
+                        _modules.RemoveAt(i);
+                    }
                 }
         }
 
@@ -144,7 +162,11 @@ namespace McJoeAdmin.Cortex
                     });
 
                 _serviceHost.AddServiceEndpoint(typeof(IModuleManager),
-                    new NetNamedPipeBinding(),
+                    new NetNamedPipeBinding()
+                    {
+                        SendTimeout = new TimeSpan(0,0,30),
+                        ReceiveTimeout = TimeSpan.MaxValue                        
+                    },
                     new Uri(new Uri(HOST_URI), _wcfNamedPipe));
 
                 _serviceHost.Open();
@@ -159,9 +181,16 @@ namespace McJoeAdmin.Cortex
         public void Subscribe()
         {
             var callback = OperationContext.Current.GetCallbackChannel<IMcAdminModule>();
+
             lock(_modules)
                 if (!_modules.Contains(callback))
+                {
+                    _messageOut(new McMessage(
+                        string.Format("Subscribing module {0}",
+                            callback.GetType().Name),
+                            McMessageOrigin.Module, "INFO", DateTime.Now));
                     _modules.Add(callback);
+                }
         }
 
         public void MessageOut(McMessage pMessage)

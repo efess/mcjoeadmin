@@ -39,18 +39,8 @@ namespace DummyConsole
                 string str = RandomMinecraftString();
 
                 if (str != null)
-                {
                     Console.WriteLine(str);
-                    if (str == "SPIN")
-                    {
-
-                        string str2 = string.Empty;
-                        for (int i = 0; i < 5000000; i++)
-                        {
-                            str2 += i % 24234324234;
-                        }
-                    }
-                }
+                 
                 System.Threading.Thread.Sleep(5000);
             }
         }
@@ -59,7 +49,7 @@ namespace DummyConsole
         {
             Random rand = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
             
-            int number = rand.Next(8, 12);
+            int number = rand.Next(0, 12);
 
             switch (number)
             {

@@ -60,6 +60,7 @@ namespace McJoeAdmin.DefaultAdminModule
                 {
                     case "!PLAYERS":
                         SendPlayerList(data.Item1);
+                        SendMessage("list");
                         break;
                     case "!DERP":
                         SendMessage("say Derpy derp. De derp de duttidy da, derpy derpy doo.");

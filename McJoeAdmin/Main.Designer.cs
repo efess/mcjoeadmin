@@ -31,34 +31,37 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.txtConsoleInput = new System.Windows.Forms.TextBox();
-            this.btnSendInput = new System.Windows.Forms.Button();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.lblStartString = new System.Windows.Forms.Label();
-            this.lblMemory = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.lblMemoryUsage = new System.Windows.Forms.Label();
             this.lblCpuUsage = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.lblMemoryUsage = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.lblMemory = new System.Windows.Forms.Label();
+            this.lblStartString = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.gridConsoleOut = new System.Windows.Forms.DataGridView();
             this.colDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colOrigin = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colData = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.txtConsoleInput = new System.Windows.Forms.TextBox();
+            this.btnSendInput = new System.Windows.Forms.Button();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridConsoleOut)).BeginInit();
+            this.panel1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -75,6 +78,7 @@
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.splitContainer1);
+            this.tabPage1.Controls.Add(this.statusStrip1);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -97,57 +101,9 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.groupBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(750, 470);
-            this.splitContainer1.SplitterDistance = 180;
+            this.splitContainer1.Size = new System.Drawing.Size(750, 448);
+            this.splitContainer1.SplitterDistance = 171;
             this.splitContainer1.TabIndex = 0;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.gridConsoleOut);
-            this.groupBox1.Controls.Add(this.panel1);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(0, 0);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(750, 286);
-            this.groupBox1.TabIndex = 2;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Console";
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.txtConsoleInput);
-            this.panel1.Controls.Add(this.btnSendInput);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(3, 251);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(744, 32);
-            this.panel1.TabIndex = 1;
-            // 
-            // txtConsoleInput
-            // 
-            this.txtConsoleInput.Location = new System.Drawing.Point(3, 6);
-            this.txtConsoleInput.Name = "txtConsoleInput";
-            this.txtConsoleInput.Size = new System.Drawing.Size(399, 20);
-            this.txtConsoleInput.TabIndex = 0;
-            // 
-            // btnSendInput
-            // 
-            this.btnSendInput.Location = new System.Drawing.Point(417, 5);
-            this.btnSendInput.Name = "btnSendInput";
-            this.btnSendInput.Size = new System.Drawing.Size(104, 21);
-            this.btnSendInput.TabIndex = 1;
-            this.btnSendInput.Text = "Send Input";
-            this.btnSendInput.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(548, 476);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Players";
-            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
@@ -159,57 +115,12 @@
             this.groupBox2.Controls.Add(this.lblMemory);
             this.groupBox2.Controls.Add(this.lblStartString);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox2.Location = new System.Drawing.Point(0, 103);
+            this.groupBox2.Location = new System.Drawing.Point(0, 94);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(750, 77);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Server Information";
-            // 
-            // lblStartString
-            // 
-            this.lblStartString.AutoSize = true;
-            this.lblStartString.Location = new System.Drawing.Point(118, 20);
-            this.lblStartString.Name = "lblStartString";
-            this.lblStartString.Size = new System.Drawing.Size(66, 13);
-            this.lblStartString.TabIndex = 0;
-            this.lblStartString.Text = "lblStartString";
-            // 
-            // lblMemory
-            // 
-            this.lblMemory.AutoSize = true;
-            this.lblMemory.Location = new System.Drawing.Point(219, 84);
-            this.lblMemory.Name = "lblMemory";
-            this.lblMemory.Size = new System.Drawing.Size(54, 13);
-            this.lblMemory.TabIndex = 1;
-            this.lblMemory.Text = "lblMemory";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(94, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Startup Command:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(7, 38);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(78, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Memory Usage";
-            // 
-            // lblMemoryUsage
-            // 
-            this.lblMemoryUsage.AutoSize = true;
-            this.lblMemoryUsage.Location = new System.Drawing.Point(118, 38);
-            this.lblMemoryUsage.Name = "lblMemoryUsage";
-            this.lblMemoryUsage.Size = new System.Drawing.Size(85, 13);
-            this.lblMemoryUsage.TabIndex = 4;
-            this.lblMemoryUsage.Text = "lblMemoryUsage";
             // 
             // lblCpuUsage
             // 
@@ -228,6 +139,63 @@
             this.label4.Size = new System.Drawing.Size(60, 13);
             this.label4.TabIndex = 5;
             this.label4.Text = "Cpu Usage";
+            // 
+            // lblMemoryUsage
+            // 
+            this.lblMemoryUsage.AutoSize = true;
+            this.lblMemoryUsage.Location = new System.Drawing.Point(118, 38);
+            this.lblMemoryUsage.Name = "lblMemoryUsage";
+            this.lblMemoryUsage.Size = new System.Drawing.Size(85, 13);
+            this.lblMemoryUsage.TabIndex = 4;
+            this.lblMemoryUsage.Text = "lblMemoryUsage";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(7, 38);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(78, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Memory Usage";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(94, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Startup Command:";
+            // 
+            // lblMemory
+            // 
+            this.lblMemory.AutoSize = true;
+            this.lblMemory.Location = new System.Drawing.Point(219, 84);
+            this.lblMemory.Name = "lblMemory";
+            this.lblMemory.Size = new System.Drawing.Size(54, 13);
+            this.lblMemory.TabIndex = 1;
+            this.lblMemory.Text = "lblMemory";
+            // 
+            // lblStartString
+            // 
+            this.lblStartString.AutoSize = true;
+            this.lblStartString.Location = new System.Drawing.Point(118, 20);
+            this.lblStartString.Name = "lblStartString";
+            this.lblStartString.Size = new System.Drawing.Size(66, 13);
+            this.lblStartString.TabIndex = 0;
+            this.lblStartString.Text = "lblStartString";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.gridConsoleOut);
+            this.groupBox1.Controls.Add(this.panel1);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(750, 273);
+            this.groupBox1.TabIndex = 2;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Console";
             // 
             // gridConsoleOut
             // 
@@ -248,7 +216,7 @@
             this.gridConsoleOut.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.gridConsoleOut.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridConsoleOut.ShowEditingIcon = false;
-            this.gridConsoleOut.Size = new System.Drawing.Size(744, 235);
+            this.gridConsoleOut.Size = new System.Drawing.Size(744, 222);
             this.gridConsoleOut.TabIndex = 2;
             // 
             // colDate
@@ -277,8 +245,60 @@
             this.colData.Name = "colData";
             this.colData.ReadOnly = true;
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.txtConsoleInput);
+            this.panel1.Controls.Add(this.btnSendInput);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(3, 238);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(744, 32);
+            this.panel1.TabIndex = 1;
+            // 
+            // txtConsoleInput
+            // 
+            this.txtConsoleInput.Location = new System.Drawing.Point(3, 6);
+            this.txtConsoleInput.Name = "txtConsoleInput";
+            this.txtConsoleInput.Size = new System.Drawing.Size(399, 20);
+            this.txtConsoleInput.TabIndex = 0;
+            // 
+            // btnSendInput
+            // 
+            this.btnSendInput.Location = new System.Drawing.Point(417, 5);
+            this.btnSendInput.Name = "btnSendInput";
+            this.btnSendInput.Size = new System.Drawing.Size(104, 21);
+            this.btnSendInput.TabIndex = 1;
+            this.btnSendInput.Text = "Send Input";
+            this.btnSendInput.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(756, 476);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Players";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lblStatus});
+            this.statusStrip1.Location = new System.Drawing.Point(3, 451);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(750, 22);
+            this.statusStrip1.TabIndex = 1;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(0, 17);
+            // 
             // Main
             // 
+            this.AcceptButton = this.btnSendInput;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(764, 502);
@@ -287,16 +307,19 @@
             this.Text = "McJoeAdmin";
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridConsoleOut)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -324,6 +347,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn colOrigin;
         private System.Windows.Forms.DataGridViewTextBoxColumn colType;
         private System.Windows.Forms.DataGridViewTextBoxColumn colData;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel lblStatus;
     }
 }
 

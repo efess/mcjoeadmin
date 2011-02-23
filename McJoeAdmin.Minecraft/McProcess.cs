@@ -107,7 +107,7 @@ namespace McJoeAdmin.Minecraft
                 if (!IsRunning
                     || cpuCounter == null)
                     return 0f;
-                return cpuCounter.NextValue();
+                return (float)Math.Round(cpuCounter.NextValue(), 2);
             }
         }
 

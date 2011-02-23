@@ -51,22 +51,23 @@ namespace McJoeAdmin
 
             if (s != null)
             {
-                s.Scroll += (sender, e) => HandleScroll(e);
+                s.Scroll += (sender, e) => HandleScroll(new GridVerticalScrollEventArgs(e, s.Maximum));
             }
 
             //_formUpdateTimer.Tick += (sender, e) => RefreshScreen();
             //_formUpdateTimer.Enabled = true;
         }
 
-        private void HandleScroll(ScrollEventArgs e)
+        private void HandleScroll(GridVerticalScrollEventArgs e)
         {
-            if (e.Type == ScrollEventType.Last)
+            if(e.InnerEventArgs.Type == ScrollEventType.EndScroll)
             {
-                _scrollAtBottom = true;
 
+                if ((e.MaximumValue - gridConsoleOut.Height) < e.InnerEventArgs.NewValue)
+                    _scrollAtBottom = true;
+                else
+                    _scrollAtBottom = false;
             }
-            else if(e.NewValue < e.OldValue)
-                _scrollAtBottom = true;
         }
 
         private void SetServerInformationToPanel(ServerInformation pServerInformation)
@@ -78,7 +79,7 @@ namespace McJoeAdmin
 
         private void SetTextToTextbox(McMessage pMessage)
         {
-            if (gridConsoleOut.Rows.Count > 30)
+            if (gridConsoleOut.Rows.Count > 500)
             {
                 gridConsoleOut.Rows.RemoveAt(0);
             }
@@ -87,7 +88,8 @@ namespace McJoeAdmin
                 pMessage.Type,
                 pMessage.Data);
 
-            gridConsoleOut.FirstDisplayedScrollingRowIndex = gridConsoleOut.Rows.Count - 1;
+            if(_scrollAtBottom)
+                gridConsoleOut.FirstDisplayedScrollingRowIndex = gridConsoleOut.Rows.Count - 1;
         }
 
         private void HandleFormTryingToClose(FormClosingEventArgs pFormClosingEventArgs)
@@ -149,18 +151,29 @@ namespace McJoeAdmin
 
             lock (_updateQueue)
             {
+                int updates = 0;
                 while (_updateQueue.Count > 0)
                 {
                     var update = _updateQueue.Dequeue();
 
                     try // Do NOT throw an exception
                     {
+                        updates++;
+
+                        if (updates > 100)
+                            return;
+                        lblStatus.Text = "Processing updates..";
+
                         if (update is ServerInformation)
                             SetServerInformationToPanel(update as ServerInformation);
                         else if (update is McMessage)
                             SetTextToTextbox(update as McMessage);
                     }
                     catch (Exception ex) { }
+                    finally
+                    {
+                        lblStatus.Text = string.Empty;
+                    }
                 }
             }
         }
@@ -173,9 +186,11 @@ namespace McJoeAdmin
                 PopupInfoMessage("Server is not running");
                 return;
             }
-
-            _inputText(txtConsoleInput.Text);
-            txtConsoleInput.Text = string.Empty;
+            if(!string.IsNullOrEmpty(txtConsoleInput.Text))
+            {
+                _inputText(txtConsoleInput.Text);
+                txtConsoleInput.Text = string.Empty;
+            }
         }
 
         private Action<int> _setUpdateInterval;
@@ -246,6 +261,18 @@ namespace McJoeAdmin
                 else
                     _memoryUsed = value;
             }
+        }
+    }
+
+    public class GridVerticalScrollEventArgs
+    {
+        public ScrollEventArgs InnerEventArgs { get; private set; }
+        public int MaximumValue { get; private set; }
+
+        public GridVerticalScrollEventArgs(ScrollEventArgs pEventArgs, int pMaximumValue)
+        {
+            InnerEventArgs = pEventArgs;
+            MaximumValue = pMaximumValue;
         }
     }
 }

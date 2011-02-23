@@ -71,13 +71,14 @@ namespace McJoeAdmin.Cortex
 
         public void SendMessageToModuleHost(McMessage pMessage)
         {
-            foreach (var module in _modules)
-            {
-                if (((ICommunicationObject)module).State == CommunicationState.Opened)
-                    module.MessageIn(pMessage);
-                else
-                    _modules.Remove(module);
-            }
+            lock(_modules)
+                foreach (var module in _modules)
+                {
+                    if (((ICommunicationObject)module).State == CommunicationState.Opened)
+                        module.MessageIn(pMessage);
+                    else
+                        _modules.Remove(module);
+                }
         }
 
         internal void InitializeModuleDomain()

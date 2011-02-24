@@ -16,6 +16,11 @@ namespace McJoeAdmin.DefaultAdminModule.XmlObjects
             get { return XML_FILE; }
         }
 
+        public LogonMessages()
+        {
+            MessagesCollection = new List<LogonMessage>();
+        }
+
         [XmlArray()]
         public List<LogonMessage> MessagesCollection;
 
@@ -23,14 +28,20 @@ namespace McJoeAdmin.DefaultAdminModule.XmlObjects
         {
             var newMessage = new LogonMessage(pSender, pReceiver, pMessage);
 
-            foreach(var dup in MessagesCollection
-                .Where(msg => msg.From == newMessage.From && msg.To == newMessage.From))
-                MessagesCollection.Remove(dup);
+            lock(MessagesCollection)
+            {
+                var dups = MessagesCollection
+                    .Where(msg => msg.From == newMessage.From && msg.To == newMessage.To).ToArray();
+                for (int i = dups.Length - 1; i >= 0; i--)
+                {
+                    MessagesCollection.Remove(dups[i]);
+                }
+
+            }
 
             MessagesCollection.Add(newMessage);
         }
 
-        private LogonMessages _messages;
         public static LogonMessages LoadInstance()
         {
             var messages = SimpleXmlStorage.Load<LogonMessages>();
@@ -50,13 +61,13 @@ namespace McJoeAdmin.DefaultAdminModule.XmlObjects
         public void RemoveMessages(string pTo)
         {
             lock(MessagesCollection)
-                foreach(var message in MessagesCollection.Where(msg => msg.To == pTo))
+                foreach(var message in MessagesCollection.Where(msg => msg.To == pTo).ToArray())
                     MessagesCollection.Remove(message);
         }
 
         public void Save()
         {
-            SimpleXmlStorage.Save(_messages);
+            SimpleXmlStorage.Save(this);
         }
     }
 }

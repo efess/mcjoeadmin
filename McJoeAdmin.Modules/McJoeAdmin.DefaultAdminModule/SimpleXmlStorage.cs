@@ -23,7 +23,14 @@ namespace McJoeAdmin.DefaultAdminModule
             using (var xmlReader = XmlReader.Create(xmlFileName))
             {
                 var serializer = new XmlSerializer(xmlObject.GetType());
-                return serializer.Deserialize(xmlReader) as T;
+                try
+                {
+                    return serializer.Deserialize(xmlReader) as T;
+                }
+                catch
+                {
+                    return null;
+                }
             }
         }
             
@@ -40,16 +47,20 @@ namespace McJoeAdmin.DefaultAdminModule
         private static string GetPath(SimpleXmlStorageObjectBase xmlStorageObject) 
         {
             
-            var fileName =
-                System.IO.Path.Combine(
+            var directory =
                     System.IO.Path.Combine(
                         System.IO.Path.GetDirectoryName(
-                            System.Reflection.Assembly.GetExecutingAssembly().Location),
-                            XML_SUB_DIRECTORY), xmlStorageObject.XmlFile);
+                            Environment.CurrentDirectory),
+                            XML_SUB_DIRECTORY);
+
+            var fileName = System.IO.Path.Combine(directory, xmlStorageObject.XmlFile);
+
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
 
             if (!File.Exists(fileName))
-                File.Create(fileName);
-
+                File.Create(fileName).Close();
+            
             return fileName;
         }
     }

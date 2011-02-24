@@ -41,7 +41,7 @@ namespace DummyConsole
                 if (str != null)
                     Console.WriteLine(str);
                  
-                System.Threading.Thread.Sleep(5000);
+                System.Threading.Thread.Sleep(1000);
             }
         }
 
@@ -49,7 +49,7 @@ namespace DummyConsole
         {
             Random rand = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
             
-            int number = rand.Next(0, 12);
+            int number = rand.Next(6, 15);
 
             switch (number)
             {
@@ -78,6 +78,12 @@ namespace DummyConsole
                     return GetMcDateTimeNow() + " [INFO] redux06790 lost connection: disconnect.quitting";
                 case 11:
                     return GetMcDateTimeNow() + " [INFO] efess [/69.119.7.235:31007] logged in with entity id 1";
+                case 12:
+                    return GetMcDateTimeNow() + " [INFO] <efess> !offlinemsg john hey whats up";
+                case 13:
+                    return GetMcDateTimeNow() + " [INFO] <kevin> !offlinemsg john -- hey whats up";
+                case 14:
+                    return GetMcDateTimeNow() + " [INFO] <kevin> !offlinemsg efess -- lolz.";
             }
             return null;
         }

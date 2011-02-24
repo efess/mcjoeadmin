@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminRules.cs" />
+    <Compile Include="McPlayerMessage.cs" />
     <Compile Include="ServerInformation.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Events\LineOutputEventArgs.cs" />

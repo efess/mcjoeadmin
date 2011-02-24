@@ -5,6 +5,7 @@ using System.Timers;
 using McJoeAdmin.Model;
 using McJoeAdmin.DefaultAdminModule.XmlObjects;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace McJoeAdmin.DefaultAdminModule
 {
@@ -44,6 +45,14 @@ namespace McJoeAdmin.DefaultAdminModule
                 }
                 return null;
             }
+
+            var playerMessage = new McPlayerMessage(pMessage.Data);
+
+            if (playerMessage.IsLoggingIn)
+            {
+                SendOfflineMessages(playerMessage);
+            }
+
             var data = ReturnPlayerAndData(pMessage.Data);
             if (data.Item1 == null)
             {
@@ -58,12 +67,12 @@ namespace McJoeAdmin.DefaultAdminModule
                     SendMessage("list");
                 }
             }
-            else
+            else if(playerMessage.Command != null)
             {
-                switch (data.Item2.ToUpper())
+                switch (playerMessage.Command.ToUpper())
                 {
-                    case "!ADDAFKMSG":
-                        AddAfkMessage(data);
+                    case "!OFFLINEMSG":
+                        AddAfkMessage(playerMessage);
                         break;
                     case "!PLAYERS":
                         SendPlayerList(data.Item1);
@@ -84,22 +93,39 @@ namespace McJoeAdmin.DefaultAdminModule
             return null;
         }
 
-        private void AddAfkMessage(System.Tuple<string, string> data)
+        private void SendOfflineMessages(McPlayerMessage pMessage)
+        {
+            bool hasMsg = false;
+            var messages = _logonMessages.GetMessages(pMessage.Name).ToArray();
+            foreach (var msg in messages)
+            {
+                hasMsg = true;
+
+                SendMessage(string.Format("tell {0} Offline Msg from {1}: {2}", msg.To, msg.From, msg.Message));
+            }
+
+            if (hasMsg)
+                _logonMessages.RemoveMessages(pMessage.Name);
+        }
+
+        private void AddAfkMessage(McPlayerMessage pData)
         {
             //!addafkmsg john hey whats up
-            var sender = data.Item1;
+            var sender = pData.Name;
             
-            Regex reg = new Regex("(.+) (.+)");
+            Regex reg = new Regex("(.+?) (.+)");
 
-            var match = reg.Match(data.Item2);
+            var match = reg.Match(pData.SubMessage);
+
             var groups = match.Groups;
             if (groups.Count == 3)
             {
                 _logonMessages.AddMessage(sender, groups[1].Value.Trim(), groups[2].Value.Trim());
+                _logonMessages.Save();
             }
             else
             {
-                SendMessage("tell {0} Correct syntax is \"!addafkmsg <recipient> <message>\"");
+                SendMessage("tell {0} Correct syntax is \"!offlinemsg <recipient> <message>\"");
                 return;
             }
         }
@@ -130,5 +156,6 @@ namespace McJoeAdmin.DefaultAdminModule
         {
             SendMessage("list");
         }
+
     }
 }

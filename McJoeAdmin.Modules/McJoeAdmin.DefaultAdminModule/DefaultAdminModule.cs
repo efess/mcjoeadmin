@@ -3,6 +3,8 @@ using System.ServiceModel;
 using McJoeAdmin.ModuleHost;
 using System.Timers;
 using McJoeAdmin.Model;
+using McJoeAdmin.DefaultAdminModule.XmlObjects;
+using System.Text.RegularExpressions;
 
 namespace McJoeAdmin.DefaultAdminModule
 {
@@ -11,10 +13,12 @@ namespace McJoeAdmin.DefaultAdminModule
     {
         // State vars
         private List<string> _currentPlayers;
+        private LogonMessages _logonMessages;
 
         public DefaultAdminModule()
         {
             _currentPlayers = new List<string>();
+            _logonMessages = LogonMessages.LoadInstance();
         }
 
         // IMcAdminModule Implementation
@@ -58,6 +62,9 @@ namespace McJoeAdmin.DefaultAdminModule
             {
                 switch (data.Item2.ToUpper())
                 {
+                    case "!ADDAFKMSG":
+                        AddAfkMessage(data);
+                        break;
                     case "!PLAYERS":
                         SendPlayerList(data.Item1);
                         SendMessage("list");
@@ -75,6 +82,26 @@ namespace McJoeAdmin.DefaultAdminModule
             }
 
             return null;
+        }
+
+        private void AddAfkMessage(System.Tuple<string, string> data)
+        {
+            //!addafkmsg john hey whats up
+            var sender = data.Item1;
+            
+            Regex reg = new Regex("(.+) (.+)");
+
+            var match = reg.Match(data.Item2);
+            var groups = match.Groups;
+            if (groups.Count == 3)
+            {
+                _logonMessages.AddMessage(sender, groups[1].Value.Trim(), groups[2].Value.Trim());
+            }
+            else
+            {
+                SendMessage("tell {0} Correct syntax is \"!addafkmsg <recipient> <message>\"");
+                return;
+            }
         }
 
         private void ParsePlayers(string pPlayers)

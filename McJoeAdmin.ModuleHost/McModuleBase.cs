@@ -14,6 +14,8 @@ namespace McJoeAdmin.ModuleHost
         private string _pipe;
         private bool _isConnected;
 
+        public abstract string Name { get; }
+
         public McModuleBase()
         {
             _isConnected = false;
@@ -71,7 +73,7 @@ namespace McJoeAdmin.ModuleHost
                 try
                 {
                     _hostProxy = pipeFactory.CreateChannel();
-                    _hostProxy.Subscribe();
+                    _hostProxy.Subscribe(Name);
                     
                     _isConnected = true;
                 }

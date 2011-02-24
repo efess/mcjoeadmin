@@ -76,16 +76,6 @@ namespace McJoeAdmin.Cortex
                 {
                     var module = _modules[i];
 
-                    if (((ICommunicationObject)module).State == CommunicationState.Closed)
-                    {
-                        _messageOut(new McMessage(
-                            string.Format("Module was in {0} State, ReOpening",
-                                ((ICommunicationObject)module).State.ToString()),
-                                McMessageOrigin.Module, "INFO", DateTime.Now));
-
-                        ((ICommunicationObject)module).Open();
-                    }
-
                     if (((ICommunicationObject)module).State == CommunicationState.Opened)
                         module.MessageIn(pMessage);
                     else
@@ -134,7 +124,21 @@ namespace McJoeAdmin.Cortex
 
         private void LoadModule(string str)
         {
-            _moduleLoader.TryLoadModule(str);
+            bool error;
+            if (_moduleLoader.TryLoadModule(str, out error))
+            {
+                _messageOut(new McMessage(
+                    string.Format("Adding Assembly {0}",
+                        System.IO.Path.GetFileName(str)),
+                        McMessageOrigin.Module, "INFO", DateTime.Now));
+            }
+            else if (error)
+            {
+                _messageOut(new McMessage(
+                    string.Format("Error while attempting to add Assembly {0}",
+                        System.IO.Path.GetFileName(str)),
+                        McMessageOrigin.Module, "INFO", DateTime.Now));
+            }
         }
 
 
@@ -178,7 +182,7 @@ namespace McJoeAdmin.Cortex
         #region IModuleManager Members
 
         private List<IMcAdminModule> _modules = new List<IMcAdminModule>();
-        public void Subscribe()
+        public void Subscribe(string pModuleName)
         {
             var callback = OperationContext.Current.GetCallbackChannel<IMcAdminModule>();
 
@@ -187,7 +191,7 @@ namespace McJoeAdmin.Cortex
                 {
                     _messageOut(new McMessage(
                         string.Format("Subscribing module {0}",
-                            callback.GetType().Name),
+                            string.IsNullOrEmpty(pModuleName) ? "NoName" : pModuleName),
                             McMessageOrigin.Module, "INFO", DateTime.Now));
                     _modules.Add(callback);
                 }

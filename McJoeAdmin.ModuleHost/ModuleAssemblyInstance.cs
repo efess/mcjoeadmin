@@ -35,6 +35,7 @@ namespace McJoeAdmin.ModuleHost
                 && types.FirstOrDefault(type2 => type2 != type1
                     && type1.IsAssignableFrom(type2)) == null))
             {
+                var module = Activator.CreateInstance(type);
                 _adminModules.Add(
                     Activator.CreateInstance(type) as IMcAdminModule);
             }

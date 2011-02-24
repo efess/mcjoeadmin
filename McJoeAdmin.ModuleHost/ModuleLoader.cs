@@ -20,9 +20,10 @@ namespace McJoeAdmin.ModuleHost
         }
 
 
-        public void TryLoadModule(string pPath)
+        public bool TryLoadModule(string pPath, out bool error)
         {
             //var moduleAssemblyInstance new ModuleAssemblyInstance(Assembly.LoadFile(pPath));
+            error = false;
 
             if (AppDomain.CurrentDomain.GetAssemblies().ToList().Find((asm) => asm.Location == pPath) == null
                 && _currentLoadedModules.FirstOrDefault((im) => im.Path == pPath) == null)
@@ -36,11 +37,18 @@ namespace McJoeAdmin.ModuleHost
                 if (types.FirstOrDefault((type) => adminModuleType.IsAssignableFrom(type)
                                              && !type.IsInterface && !type.IsAbstract) != null)
                 {
-                    var instance = new ModuleAssemblyInstance(assembly);
-                    foreach (var mod in instance.AdminModules()) { mod.ConnectToLocalhost(_wcfNamedPipe); }
-                    _currentLoadedModules.Add(instance);
+                    try
+                    {
+                        var instance = new ModuleAssemblyInstance(assembly);
+                        foreach (var mod in instance.AdminModules()) { mod.ConnectToLocalhost(_wcfNamedPipe); }
+                        _currentLoadedModules.Add(instance);
+
+                        return true;
+                    }
+                    catch { error = true; } 
                 }
             }
+            return true;
         }
     }
 }

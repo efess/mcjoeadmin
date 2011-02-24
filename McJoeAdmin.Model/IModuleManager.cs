@@ -10,7 +10,7 @@ namespace McJoeAdmin.Model
     public interface IModuleManager
     {
         [OperationContract]
-        void Subscribe();
+        void Subscribe(string pName);
 
         [OperationContract]
         void MessageOut(McMessage pMessage);

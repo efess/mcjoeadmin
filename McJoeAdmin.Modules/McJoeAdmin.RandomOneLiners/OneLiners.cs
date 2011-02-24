@@ -14,6 +14,8 @@ namespace McJoeAdmin.RandomOneLiners
         private string[] _oneLiners;
         private string[] _tooMuchCoffee;
 
+        public override string Name { get { return "One Liners"; } }
+
         public OneLiners()
             : base()
         {

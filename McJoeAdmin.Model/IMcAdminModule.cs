@@ -10,7 +10,6 @@ namespace McJoeAdmin.Model
     {
         void SetAdminRules(AdminRules pAdminRules);
         void ConnectToLocalhost(string pPipe);
-
         [OperationContract(IsOneWay = true)]
         void MessageIn(McMessage pMessage);
     }

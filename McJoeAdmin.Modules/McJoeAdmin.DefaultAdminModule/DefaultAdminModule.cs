@@ -150,7 +150,7 @@ namespace McJoeAdmin.DefaultAdminModule
             lock (_currentPlayers)
             {
                 _currentPlayers.Clear();
-                foreach (var player in pPlayers.Split(new char[] { ' ' }))
+                foreach (var player in pPlayers.Split(new char[] { ',' },System.StringSplitOptions.RemoveEmptyEntries))
                 {
                     _currentPlayers.Add(player.Trim());
                 }

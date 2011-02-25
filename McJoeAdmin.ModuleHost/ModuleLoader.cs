@@ -48,7 +48,7 @@ namespace McJoeAdmin.ModuleHost
                     catch { error = true; } 
                 }
             }
-            return true;
+            return false;
         }
     }
 }

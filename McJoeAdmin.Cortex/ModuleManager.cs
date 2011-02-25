@@ -144,11 +144,13 @@ namespace McJoeAdmin.Cortex
 
         private void AssemblyCreated(string pPath)
         {
+            System.Diagnostics.Debug.WriteLine("---->Assembly Created " + pPath);
             LoadModule(pPath);
         }
         
         private void AssemblyDeleted(string pPath)
         {
+            System.Diagnostics.Debug.WriteLine("---->Assembly Deleted " + pPath);
             lock(_modules)
                 _modules.Clear();
             AppDomain.Unload(_moduleAppDomain);

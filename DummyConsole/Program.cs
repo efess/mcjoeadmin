@@ -41,7 +41,7 @@ namespace DummyConsole
                 if (str != null)
                     Console.WriteLine(str);
                  
-                System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(3000);
             }
         }
 
@@ -49,7 +49,7 @@ namespace DummyConsole
         {
             Random rand = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
             
-            int number = rand.Next(6, 15);
+            int number = rand.Next(0, 15);
 
             switch (number)
             {

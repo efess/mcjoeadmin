@@ -31,7 +31,8 @@ namespace McJoeAdmin.DefaultAdminModule.XmlObjects
             lock(MessagesCollection)
             {
                 var dups = MessagesCollection
-                    .Where(msg => msg.From == newMessage.From && msg.To == newMessage.To).ToArray();
+                    .Where(msg => string.Compare(msg.From, newMessage.From, true) == 0 
+                        && string.Compare(msg.To, newMessage.To, true) == 0).ToArray();
                 for (int i = dups.Length - 1; i >= 0; i--)
                 {
                     MessagesCollection.Remove(dups[i]);
@@ -54,14 +55,14 @@ namespace McJoeAdmin.DefaultAdminModule.XmlObjects
         {
             IEnumerable<LogonMessage> list = null;
             lock(MessagesCollection)
-                list = MessagesCollection.Where(msg => msg.To == pTo);
+                list = MessagesCollection.Where(msg => string.Compare(msg.To, pTo, true) == 0);
             return list;
         }
 
         public void RemoveMessages(string pTo)
         {
             lock(MessagesCollection)
-                foreach(var message in MessagesCollection.Where(msg => msg.To == pTo).ToArray())
+                foreach(var message in MessagesCollection.Where(msg => string.Compare(msg.To, pTo, true) == 0).ToArray())
                     MessagesCollection.Remove(message);
         }
 

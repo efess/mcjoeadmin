@@ -32,8 +32,7 @@ namespace McJoeAdmin.DefaultAdminModule
                     return null;
                 }
             }
-        }
-            
+        } 
 
         public static void Save(SimpleXmlStorageObjectBase pXmlObject)
         {

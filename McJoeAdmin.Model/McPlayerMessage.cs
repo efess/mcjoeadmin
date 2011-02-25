@@ -31,6 +31,16 @@ namespace McJoeAdmin.Model
             }
 
 
+            reg = new Regex("<(.+)> (!.+)");
+            match = reg.Match(pMessage);
+            groups = match.Groups;
+            if (groups.Count == 3)
+            {
+                Name = groups[1].Value.Trim();
+                Command = groups[2].Value.Trim();
+                return;
+            }
+
             reg = new Regex("<(.+)> (.+)");
             match = reg.Match(pMessage);
             groups = match.Groups;

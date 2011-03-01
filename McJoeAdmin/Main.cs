@@ -155,7 +155,7 @@ namespace McJoeAdmin
                 lblStatus.Text = "Processing updates..";
 
                 while (_updateQueue.Count > 0
-                    || updates > 1000)
+                    && updates < 1000)
                 {
                     var update = _updateQueue.Dequeue();
 

@@ -90,7 +90,6 @@ namespace McJoeAdmin.ModuleHost
             {
                 throw ex;
             }
-
         }
     }
 }

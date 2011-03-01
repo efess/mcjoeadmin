@@ -57,6 +57,7 @@ namespace McJoeAdmin.DefaultAdminModule
             {
                 SendWelcomeMessage(playerMessage.Name);
                 SendOfflineMessages(playerMessage);
+                SendMessage("list");
             }
 
             if (playerMessage.Name == null)

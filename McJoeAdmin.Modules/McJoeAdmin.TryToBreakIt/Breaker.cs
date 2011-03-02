@@ -16,7 +16,8 @@ namespace McJoeAdmin.TryToBreakIt
         }
         public Breaker()
         {
-            throw new Exception("Lolception");
+            // SendMessage(new string(new char[] { 'L', 'O', 'L' }, 0, 10000));
+            //throw new Exception("Lolception");
         }
 
 
@@ -26,6 +27,10 @@ namespace McJoeAdmin.TryToBreakIt
 
         public override void MessageIn(Model.McMessage pMessage)
         {
+            SendMessage(new string('L', 10000));
+            //throw new Exception("Lolception");
         }
+
+        
     }
 }

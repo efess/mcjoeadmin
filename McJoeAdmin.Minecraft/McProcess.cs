@@ -146,7 +146,7 @@ namespace McJoeAdmin.Minecraft
         {
             if (!IsRunning)
                 return;
-            Console.WriteLine(pData);
+            //Console.WriteLine(pData);
 
             _process.StandardInput.WriteLine(pData);
         }

@@ -7,20 +7,25 @@ using System.Text.RegularExpressions;
 using System.ServiceModel;
 using McJoeAdmin.ModuleHost;
 using McJoeAdmin.Model;
+using System.Configuration;
 
 namespace McJoeAdmin.IrcBot
 {
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant)]
     public class IrcBot : McModuleBase
     {
+        IrcBotConfig _config;
         IrcClient _ircClient;
-        private string _channelName = "#mcjoeadmin";
+
         public override string Name
         {
             get { return "IrcBot"; }
         }
+
         public IrcBot()
         {
+            _config = ConfigurationManager.GetSection("IrcBotConfig") as IrcBotConfig;
+            
             InitializeClient();
         }
 
@@ -32,17 +37,37 @@ namespace McJoeAdmin.IrcBot
         private void InitializeClient()
         {
             _ircClient = new IrcClient();
+            _ircClient.OnReadLine += (sender, e) => IrcRawOutput(e.Line.ToString());
+            _ircClient.OnConnected += (sender, e) => ConnectedOk();
+
+            new Action(() => 
+                {
+                    System.Threading.Thread.CurrentThread.Name = "Stupid Listen thread... WTF?";
+                    while(true)
+                    {
+                        _ircClient.Listen();
+                        System.Threading.Thread.Sleep(100);
+                    }
+                }).BeginInvoke(null, null);
+
+            _ircClient.Connect(_config.Server, _config.Port);
             
-            _ircClient.Connect("irc.dal.net", 6664);
             _ircClient.AutoRejoin = true;
-            _ircClient.Login("McJoeAdminBot", "Joe");
-            _ircClient.RfcJoin(_channelName);
+            _ircClient.Login(_config.BotNick, _config.BotNick);
+            
 
             _ircClient.OnConnectionError += (sender, e) => System.Diagnostics.Debug.WriteLine(e.ToString());
             _ircClient.OnChannelMessage += (sender, e) => ChannelMessage(e.Data);
-            _ircClient.OnReadLine += (sender, e) => System.Diagnostics.Debug.WriteLine(e.Line.ToString());
+        }
+        private void IrcRawOutput(string pMessage)
+        {
+            System.Diagnostics.Debug.WriteLine(pMessage);
         }
 
+        private void ConnectedOk()
+        {
+            _ircClient.RfcJoin(_config.Channel);
+        }
         private void ChannelMessage(IrcMessageData pMessage)
         {
             Regex reg = new Regex("!mc (.+)");
@@ -58,13 +83,13 @@ namespace McJoeAdmin.IrcBot
 
         public override void MessageIn(McJoeAdmin.Model.McMessage pMessage)
         {
-            if (!_ircClient.IsJoined(_channelName)
-                || !_ircClient.IsConnected)
+            if (!_ircClient.IsConnected)
                 return;
+
             var playerMessage = new McPlayerMessage(pMessage.Data);
             if(!string.IsNullOrEmpty(playerMessage.Name))
             {
-                _ircClient.SendMessage(SendType.Message, _channelName, pMessage.Data);
+                _ircClient.SendMessage(SendType.Message, _config.Channel, pMessage.Data);
             }
         }
     }

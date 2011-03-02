@@ -8,6 +8,7 @@ using System.Reflection;
 using System.IO;
 using System.ServiceModel;
 using System.Threading;
+using System.Runtime.Remoting;
 
 namespace McJoeAdmin.Cortex
 {
@@ -118,6 +119,7 @@ namespace McJoeAdmin.Cortex
                 )
                 , DLL_EXTENSION_FILTER))
             {
+                System.Diagnostics.Debug.WriteLine("Trying to load module in file " + str);
                 LoadModule(str);
             }
         }
@@ -145,7 +147,19 @@ namespace McJoeAdmin.Cortex
         private void AssemblyCreated(string pPath)
         {
             System.Diagnostics.Debug.WriteLine("---->Assembly Created " + pPath);
-            LoadModule(pPath);
+
+            try
+            {
+                LoadModule(pPath);
+            }
+            catch (RemotingException)
+            {
+                lock (_modules)
+                    _modules.Clear();
+                AppDomain.Unload(_moduleAppDomain);
+                InitializeModuleDomain();
+                LoadAllModules();
+            }
         }
         
         private void AssemblyDeleted(string pPath)

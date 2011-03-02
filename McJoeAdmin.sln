@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McJoeAdmin.TryToBreakIt", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McJoeAdmin.IrcBot", "McJoeAdmin.IrcBot\McJoeAdmin.IrcBot.csproj", "{38C77C18-A2C6-4C67-ACAE-9C139AE6213B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McJoeAdmin.BackupUtility", "McJoeAdmin.Modules\McJoeAdmin.BackupUtility\McJoeAdmin.BackupUtility.csproj", "{B5D6D75D-2685-48D4-80A1-413327D929FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +147,16 @@ Global
 		{38C77C18-A2C6-4C67-ACAE-9C139AE6213B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{38C77C18-A2C6-4C67-ACAE-9C139AE6213B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{38C77C18-A2C6-4C67-ACAE-9C139AE6213B}.Release|x86.ActiveCfg = Release|Any CPU
+		{B5D6D75D-2685-48D4-80A1-413327D929FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5D6D75D-2685-48D4-80A1-413327D929FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5D6D75D-2685-48D4-80A1-413327D929FF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B5D6D75D-2685-48D4-80A1-413327D929FF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B5D6D75D-2685-48D4-80A1-413327D929FF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B5D6D75D-2685-48D4-80A1-413327D929FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5D6D75D-2685-48D4-80A1-413327D929FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5D6D75D-2685-48D4-80A1-413327D929FF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B5D6D75D-2685-48D4-80A1-413327D929FF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B5D6D75D-2685-48D4-80A1-413327D929FF}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -154,5 +166,6 @@ Global
 		{67B8CF90-FB0A-4B7B-9F2E-48A8CA9DB898} = {5349ECF3-0488-4F47-9A90-D19DAA3AE70B}
 		{1BB13CE1-3106-4D8B-891B-343D561B1C13} = {5349ECF3-0488-4F47-9A90-D19DAA3AE70B}
 		{38C77C18-A2C6-4C67-ACAE-9C139AE6213B} = {5349ECF3-0488-4F47-9A90-D19DAA3AE70B}
+		{B5D6D75D-2685-48D4-80A1-413327D929FF} = {5349ECF3-0488-4F47-9A90-D19DAA3AE70B}
 	EndGlobalSection
 EndGlobal

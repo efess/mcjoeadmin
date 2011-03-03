@@ -13,6 +13,7 @@ namespace McJoeAdmin.RandomOneLiners
     {
         private string[] _oneLiners;
         private string[] _tooMuchCoffee;
+        private string[] _mitchHedberg;
 
         public override string Name { get { return "One Liners"; } }
 
@@ -21,6 +22,7 @@ namespace McJoeAdmin.RandomOneLiners
         {
             _oneLiners = OneLinerList.Data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             _tooMuchCoffee = TooMuchCoffee.Data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            _mitchHedberg = MitchHedberg.Data.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         public override void MessageIn(McMessage pMessage)
@@ -35,6 +37,10 @@ namespace McJoeAdmin.RandomOneLiners
                 else if (data.Item2.ToUpper() == "!COFFEE")
                 {
                     ReturnRandomItem(_tooMuchCoffee);
+                }
+                else if (data.Item2.ToUpper() == "!MITCH")
+                {
+                    ReturnRandomItem(_mitchHedberg);
                 }
             }
         }

@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MitchHedberg.cs" />
     <Compile Include="OneLinerList.cs" />
     <Compile Include="OneLiners.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

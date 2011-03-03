@@ -73,7 +73,7 @@ namespace DummyConsole
                 case 8:
                     return GetMcDateTimeNow() + " [INFO] Disconnecting redux06790 [/69.119.8.191:49714]: Took too long to log in";
                 case 9:
-                    return GetMcDateTimeNow() + " [INFO] redux06790 lost connection: disconnect.quitting";
+                    return GetMcDateTimeNow() + " [INFO] <redux06790> !mitch";
                 case 10:
                     return GetMcDateTimeNow() + " [INFO] redux06790 lost connection: disconnect.quitting";
                 case 11:

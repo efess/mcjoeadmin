@@ -29,7 +29,7 @@ namespace McJoeAdmin.Cortex
             _serverInstance = pServer;
             _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location),
                 (mcm) => RouteMessage(mcm));
-            _packetTunnel = new PacketTunnel(25566, 25567);
+            //_packetTunnel = new PacketTunnel(25566, 25567);
         }
 
         public Action<McMessage> ConsoleOut;
@@ -43,7 +43,8 @@ namespace McJoeAdmin.Cortex
             _serverInstance = new McProcess(pExe, pArgs, pStartupFolder);
             _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location),
                 (mcm) => RouteMessage(mcm));
-            
+
+            //_packetTunnel = new PacketTunnel(25566, 25567);
         }
 
         public void StartServer()

@@ -9,10 +9,6 @@ namespace McJoeAdmin.Model
     {
         void OutputConsoleText(McMessage pOutput);
         void ServerInformation(ServerInformation pServerInformation);
-        void LoadedModules(IEnumerable<string> pLoadedModuleList);
-
-
-        Action<string> UnloadModule { set; }
 
         Action<string> InputText {  set; }
         Action StartServer { set; }

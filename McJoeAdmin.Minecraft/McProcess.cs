@@ -60,7 +60,6 @@ namespace McJoeAdmin.Minecraft
             _process.Exited += (sender, e) => Close();
 
             _process.Start();
-
             _process.BeginErrorReadLine();
             _process.BeginOutputReadLine();
 

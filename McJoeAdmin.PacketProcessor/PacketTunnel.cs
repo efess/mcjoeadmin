@@ -29,7 +29,9 @@ namespace McJoeAdmin.PacketProcessor
             _mcPort = pMcPort;
             _mcHost = pMcEndPoint;
             _listenPort = pListenPort;
-            _listenSocket = new Socket(new SocketInformation());
+            _listenSocket = new Socket(AddressFamily.InterNetwork, 
+                                         SocketType.Stream,
+                                         ProtocolType.Tcp);
             
             StartListen();
         }
@@ -37,9 +39,9 @@ namespace McJoeAdmin.PacketProcessor
 
         private void StartListen()
         {
-            new Action(() => WaitAndAcceptConnection()).BeginInvoke(ParameterlessActionEndInvoke, null);
             _listenSocket.Bind(new IPEndPoint(IPAddress.Any, _listenPort));
             _listenSocket.Listen(10);
+            new Action(() => WaitAndAcceptConnection()).BeginInvoke(ParameterlessActionEndInvoke, null);
         }
 
         private void WaitAndAcceptConnection()
@@ -57,21 +59,40 @@ namespace McJoeAdmin.PacketProcessor
         // This will start to be huge while I figure out exactly how this will work.
         // WIll eventually be in its own class
         // Design after code.. woo!
+
+        // PROOF OF CONCEPT
         private void ManageSocketConnection(Socket pUserSocket)
         {
+            int bufferSize = 10000;
             var hostEntry = Dns.GetHostEntry(_mcHost);
 
-            Socket mcSocket = new Socket(new SocketInformation());
+            Socket mcSocket = new Socket(AddressFamily.InterNetwork,
+                                         SocketType.Stream,
+                                         ProtocolType.Tcp);
 
             mcSocket.Connect(hostEntry.AddressList, _mcPort);
 
-            byte[] buffer = new byte[1024];
-            
-            while(!_shutDownThreads)
+            new Action(() =>
+                {
+                    byte[] buffer = new byte[bufferSize];
+
+                    while (!_shutDownThreads)
+                    {
+                        int received = pUserSocket.Receive(buffer, bufferSize, SocketFlags.None);
+                        mcSocket.Send(buffer, received, SocketFlags.None);
+                        //Console.WriteLine("MC <- " + received.ToString());
+                    }
+                }).BeginInvoke(ParameterlessActionEndInvoke, null);
+            new Action(() =>
             {
-                int received = pUserSocket.Receive(buffer, 1024, SocketFlags.None);
-                mcSocket.Send(buffer, received, SocketFlags.None);
-            }
+                byte[] buffer = new byte[bufferSize];
+                while (!_shutDownThreads)
+                {
+                    int received = mcSocket.Receive(buffer, bufferSize, SocketFlags.None);
+                    pUserSocket.Send(buffer, received, SocketFlags.None);
+                    //Console.WriteLine("MC -> " + received.ToString());
+                }
+            }).BeginInvoke(ParameterlessActionEndInvoke, null);
         }
 
         private void ParameterlessActionEndInvoke(IAsyncResult result)

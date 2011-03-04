@@ -102,7 +102,7 @@ namespace McJoeAdmin.DefaultAdminModule
         private void SendWelcomeMessage(string pPlayerName)
         {
             SendMessage(string.Format("tell {0} Welcome to Efess's minecraft server", pPlayerName));
-            SendMessage(string.Format("tell {0} Visit the wiki here: mcdev.myxwiki.org", pPlayerName));
+            SendMessage(string.Format("tell {0} Wiki: mcdev.myxwiki.org", pPlayerName));
         }
 
         private void SendOfflineMessages(McPlayerMessage pMessage)

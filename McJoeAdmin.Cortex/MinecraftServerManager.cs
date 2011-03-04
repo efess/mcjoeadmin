@@ -6,6 +6,7 @@ using McJoeAdmin.Minecraft;
 using McJoeAdmin.Model;
 using System.Reflection;
 using System.IO;
+using McJoeAdmin.PacketProcessor;
 
 namespace McJoeAdmin.Cortex
 {
@@ -17,6 +18,7 @@ namespace McJoeAdmin.Cortex
         private const int WAIT_PERIOD_SHUTDOWN = 5000;
 
         private IMcServer _serverInstance;
+        private PacketTunnel _packetTunnel;
         private ModuleManager _moduleManager;
 
         public MinecraftServerManager(IMcServer pServer)
@@ -27,6 +29,7 @@ namespace McJoeAdmin.Cortex
             _serverInstance = pServer;
             _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location),
                 (mcm) => RouteMessage(mcm));
+            _packetTunnel = new PacketTunnel(25566, 25567);
         }
 
         public Action<McMessage> ConsoleOut;

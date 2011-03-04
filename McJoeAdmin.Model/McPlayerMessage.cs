@@ -19,35 +19,35 @@ namespace McJoeAdmin.Model
         {
             RawMessage = pMessage;
 
-            Regex reg = new Regex("<(.+)> (!.+?) (.+)");
+            Regex reg = new Regex("^(<|\\[)(.+)(>|\\]) (!.+?) (.+)");
             var match = reg.Match(pMessage);
             var groups = match.Groups;
-            if (groups.Count == 4)
+            if (groups.Count == 6)
             {
-                Name = groups[1].Value.Trim();
-                Command = groups[2].Value.Trim();
-                SubMessage = groups[3].Value.Trim();
+                Name = groups[2].Value.Trim();
+                Command = groups[4].Value.Trim();
+                SubMessage = groups[5].Value.Trim();
                 return;
             }
 
 
-            reg = new Regex("<(.+)> (!.+)");
+            reg = new Regex("^(<|\\[)(.+)(>|\\]) (!.+)");
             match = reg.Match(pMessage);
             groups = match.Groups;
-            if (groups.Count == 3)
+            if (groups.Count == 5)
             {
-                Name = groups[1].Value.Trim();
-                Command = groups[2].Value.Trim();
+                Name = groups[2].Value.Trim();
+                Command = groups[4].Value.Trim();
                 return;
             }
 
-            reg = new Regex("<(.+)> (.+)");
+            reg = new Regex("^(<|\\[)(.+)(>|\\]) (.+)");
             match = reg.Match(pMessage);
             groups = match.Groups;
-            if (groups.Count == 3)
+            if (groups.Count == 5)
             {
-                Name = groups[1].Value.Trim();
-                SubMessage = groups[2].Value.Trim();
+                Name = groups[2].Value.Trim();
+                SubMessage = groups[4].Value.Trim();
                 return;
             }
             //Jagmatt [/72.200.148.166:61422] logged in with entity id 28397

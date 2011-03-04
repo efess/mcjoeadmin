@@ -167,9 +167,23 @@ namespace McJoeAdmin.Cortex
             System.Diagnostics.Debug.WriteLine("---->Assembly Deleted " + pPath);
             lock(_modules)
                 _modules.Clear();
-            AppDomain.Unload(_moduleAppDomain);
-            InitializeModuleDomain();
-            LoadAllModules();
+
+            try
+            {
+                AppDomain.Unload(_moduleAppDomain);
+
+                InitializeModuleDomain();
+                LoadAllModules();
+            }
+            catch(CannotUnloadAppDomainException ex)
+            {
+                _messageOut(new McMessage(
+                    string.Format("Error while attempting to unload app domain: {0}", ex.Message),
+                        McMessageOrigin.Module, "INFO", DateTime.Now));
+                _messageOut(new McMessage(
+                    string.Format("Detail: {0}", ex.ToString()),
+                        McMessageOrigin.Module, "INFO", DateTime.Now));
+            }
         }
 
         private void LoadServer()

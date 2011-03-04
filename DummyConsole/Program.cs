@@ -2,27 +2,66 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
+using System.Threading;
 
 namespace DummyConsole
 {
     public class Program
     {
-
+        static ManualResetEvent waitHandle = new ManualResetEvent(false);
         static void Main(string[] args)
         {
-            new Action(OutputSomething).BeginInvoke(null, null);
+            var read = new Thread(Read)
+            {
+                IsBackground = true
+            };
+            read.Start();
+            var write = new Thread(Write)
+                {
+                    IsBackground = true
+                };
+            write.Start();
 
-            while(true)
+            waitHandle.WaitOne();
+        }
+
+        private static void Read()
+        {
+            while (true)
             {
                 var check = Console.ReadLine();
 
                 //Console.WriteLine(check);
+                if (string.IsNullOrEmpty(check))
+                    continue;
+
                 switch (check.TrimEnd(new char[] {' ','\n', '\r'}).ToUpper())
                 {
                     case "LIST":
                         Console.WriteLine(GetMcDateTimeNow() + " [INFO] Connected players: AngryRhetoric, efess");
                         break;
+                    case "HELP":
+                        Console.WriteLine(GetMcDateTimeNow() + " [INFO] \t kick <player>             removes a player from the server");
+                        Console.WriteLine(GetMcDateTimeNow() + " [INFO] \t ban <player>              bans a player from the server");
+                        Console.WriteLine(GetMcDateTimeNow() + " [INFO] \t pardon <player>           pardons a banned player so that they can connect again");
+                        Console.WriteLine(GetMcDateTimeNow() + " [INFO] \t ban-ip <ip>               bans an IP address from the server");
+                        Console.WriteLine(GetMcDateTimeNow() + " [INFO] \t pardon-ip <ip>            pardons a banned IP address so that they can connect again");
+                        Console.WriteLine(GetMcDateTimeNow() + " [INFO] \t op <player>               turns a player into an op");
+                        Console.WriteLine(GetMcDateTimeNow() + " [INFO] \t deop <player>             removes op status from a player");
+                        Console.WriteLine(GetMcDateTimeNow() + " [INFO] \t tp <player1> <player2>    moves one player to the same location as another player");
+                        Console.WriteLine(GetMcDateTimeNow() + " [INFO] \t give <player> <id> [num]  gives a player a resource");
+                        Console.WriteLine(GetMcDateTimeNow() + " [INFO] \t tell <player> <message>   sends a private message to a player");
+                        Console.WriteLine(GetMcDateTimeNow() + " [INFO] \t say <message>             broadcasts a message to all ");
+                        Console.WriteLine(GetMcDateTimeNow() + " [INFO] \t time <add|set> <amount>   adds to or sets the world time (0-24000)");
+                        break;
 
+                }
+
+                int wtf = 3;
+                if(wtf == 3 && check.ToUpper().StartsWith("SAY "))
+                {
+                    Console.WriteLine(GetMcDateTimeNow() + " [INFO] [CONSOLE] " + check.Substring(4, check.Length - 4));
                 }
             }
         }
@@ -32,7 +71,7 @@ namespace DummyConsole
             throw new Exception("Trying this exception");
         }
 
-        private static void OutputSomething()
+        private static void Write()
         {
             while (true)
             {

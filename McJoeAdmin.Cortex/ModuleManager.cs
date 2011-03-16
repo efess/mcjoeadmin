@@ -16,13 +16,12 @@ namespace McJoeAdmin.Cortex
     internal class ModuleManager : IModuleManager
     {
         private const string DLL_EXTENSION_FILTER = "*.dll";
-        private const string DLL_MODULE_HOST = "McJoeAdmin.ModuleHost";
         private const string MODULE_HOST_TYPE = "ModuleHost";
         private static string HOST_URI = "net.pipe://localhost";
 
         private static FileSystemWatcher _fileSystemWatcher;
         private static ModuleManager _instance;
-        private AppDomain _moduleAppDomain;
+        
         private ModuleHost.ModuleLoader _moduleLoader;
         private ServiceHost _serviceHost;
         private ManualResetEvent _shutdownServer = new ManualResetEvent(false);
@@ -30,6 +29,9 @@ namespace McJoeAdmin.Cortex
         private string _wcfNamedPipe;
         private Action<McMessage> _messageOut;
         private string _searchPath = string.Empty;
+
+        private List<IMcAdminModule> _modules = new List<IMcAdminModule>();
+        private List<ModuleInstance> _loadedDomains = new List<ModuleInstance>();
 
         private ModuleManager(string pPath, Action<McMessage> pMessageOut)
         {
@@ -39,13 +41,12 @@ namespace McJoeAdmin.Cortex
 
             LoadServer();
 
-            InitializeModuleDomain();
             LoadAllModules();
 
             _fileSystemWatcher = new FileSystemWatcher(pPath, DLL_EXTENSION_FILTER);
-            _fileSystemWatcher.Created += (sender, e) => AssemblyCreated(e.FullPath);
-            _fileSystemWatcher.Deleted += (sender, e) => AssemblyDeleted(e.FullPath);
-            _fileSystemWatcher.Changed += (sender, e) => AssemblyDeleted(e.FullPath);
+            _fileSystemWatcher.Created += (sender, e) => AssemblyCreated(e.FullPath, e.ChangeType);
+            _fileSystemWatcher.Deleted += (sender, e) => AssemblyChanged(e.FullPath, e.ChangeType);
+            _fileSystemWatcher.Changed += (sender, e) => AssemblyDeleted(e.FullPath, e.ChangeType);
             _fileSystemWatcher.EnableRaisingEvents = true;
         }
 
@@ -69,7 +70,6 @@ namespace McJoeAdmin.Cortex
             return _instance;
         }
 
-
         public void SendMessageToModuleHost(McMessage pMessage)
         {
             lock(_modules)
@@ -90,27 +90,6 @@ namespace McJoeAdmin.Cortex
                 }
         }
 
-        internal void InitializeModuleDomain()
-        {
-            AppDomainSetup ads = new AppDomainSetup();
-            ads.ShadowCopyFiles = "true"; // In order to prevent local locking of DLL files
-            _moduleAppDomain = AppDomain.CreateDomain("Modules", null, ads);
-            BindingFlags flags = (BindingFlags.Public | BindingFlags.CreateInstance |
-			       BindingFlags.Instance);
-
-            var messageOut = new Action<McMessage>((mcm) => _messageOut(mcm));
-
-            _moduleLoader = _moduleAppDomain.CreateInstanceAndUnwrap(
-                DLL_MODULE_HOST, 
-                "McJoeAdmin.ModuleHost.ModuleLoader", 
-                false, 
-                flags,
-                null, 
-                new object[]{_wcfNamedPipe}, 
-                null, 
-                null) as ModuleHost.ModuleLoader;
-        }
-        
         internal void LoadAllModules()
         {
             foreach (string str in Directory.GetFiles(
@@ -119,70 +98,132 @@ namespace McJoeAdmin.Cortex
                 )
                 , DLL_EXTENSION_FILTER))
             {
-                System.Diagnostics.Debug.WriteLine("Trying to load module in file " + str);
-                LoadModule(str);
+                System.Diagnostics.Debug.WriteLine("Trying to load module from assembly " + str);
+                AddModule(str);
             }
         }
 
-        private void LoadModule(string str)
+        private void AddModule(string pLocation)
         {
-            bool error;
-            if (_moduleLoader.TryLoadModule(str, out error))
-            {
-                _messageOut(new McMessage(
-                    string.Format("Adding Assembly {0}",
-                        System.IO.Path.GetFileName(str)),
-                        McMessageOrigin.Module, "INFO", DateTime.Now));
-            }
-            else if (error)
-            {
-                _messageOut(new McMessage(
-                    string.Format("Error while attempting to add Assembly {0}",
-                        System.IO.Path.GetFileName(str)),
-                        McMessageOrigin.Module, "INFO", DateTime.Now));
-            }
-        }
-
-
-        private void AssemblyCreated(string pPath)
-        {
-            System.Diagnostics.Debug.WriteLine("---->Assembly Created " + pPath);
+            var fileSize = new FileInfo(pLocation).Length;
+            var instance = new ModuleInstance(pLocation, fileSize, _wcfNamedPipe);
+            
+            if(_loadedDomains.Any(mod => mod.Key == instance.Key))
+                return;
 
             try
             {
-                LoadModule(pPath);
+                LoadModule(instance);
             }
-            catch (RemotingException)
+            catch (RemotingException)// Not sure if this applies anymore.
             {
-                lock (_modules)
-                    _modules.Clear();
-                AppDomain.Unload(_moduleAppDomain);
-                InitializeModuleDomain();
-                LoadAllModules();
+                throw;
+                //lock (_modules)
+                //    _modules.Clear();
+                //AppDomain.Unload(_moduleAppDomain);
+                //InitializeModuleDomain();
+                //LoadAllModules();
             }
         }
-        
-        private void AssemblyDeleted(string pPath)
+
+        private void LoadModule(ModuleInstance pModule)
         {
-            System.Diagnostics.Debug.WriteLine("---->Assembly Deleted " + pPath);
-            lock(_modules)
-                _modules.Clear();
+            var moduleState = pModule.Load();
 
-            try
+            var fileName = System.IO.Path.GetFileName(pModule.FileName);
+
+            switch (moduleState)
             {
-                AppDomain.Unload(_moduleAppDomain);
+                case ModuleState.Loaded:
+                    _messageOut(new McMessage(
+                        string.Format("Adding Assembly {0}",
+                            System.IO.Path.GetFileName(fileName)),
+                            McMessageOrigin.Module, "INFO", DateTime.Now));
 
-                InitializeModuleDomain();
-                LoadAllModules();
+                    _loadedDomains.Add(pModule);
+                    break;
+
+                case ModuleState.LoadError:
+                    _messageOut(new McMessage(
+                        string.Format("Error while attempting to add Assembly {0}",
+                            System.IO.Path.GetFileName(fileName)),
+                            McMessageOrigin.Module, "INFO", DateTime.Now));
+                    break;
+
+                default:
+                    _messageOut(new McMessage(
+                        string.Format("No module types in Assembly {0}",
+                            System.IO.Path.GetFileName(fileName)),
+                            McMessageOrigin.Module, "INFO", DateTime.Now));
+                    break;
             }
-            catch(CannotUnloadAppDomainException ex)
+        }
+
+        private void AssemblyCreated(string pPath, WatcherChangeTypes changeType)
+        {
+            System.Diagnostics.Debug.WriteLine("---->Assembly Created (" + changeType.ToString() + ") " + pPath + " ");
+            FolderChange(pPath, changeType);
+        }
+
+        private void AssemblyChanged(string pPath, WatcherChangeTypes changeType)
+        {
+            System.Diagnostics.Debug.WriteLine("---->Assembly Changed (" + changeType.ToString()  + ") " + pPath + " ");
+            FolderChange(pPath, changeType);
+        }
+        private void AssemblyDeleted(string pPath, WatcherChangeTypes changeType)
+        {
+            System.Diagnostics.Debug.WriteLine("---->Assembly Deleted (" + changeType.ToString() + ") " + pPath + " ");
+            FolderChange(pPath, changeType);
+        }
+
+        private void FolderChange(string pPath, WatcherChangeTypes pChangeType)
+        {
+            switch (pChangeType)
             {
-                _messageOut(new McMessage(
-                    string.Format("Error while attempting to unload app domain: {0}", ex.Message),
-                        McMessageOrigin.Module, "INFO", DateTime.Now));
-                _messageOut(new McMessage(
-                    string.Format("Detail: {0}", ex.ToString()),
-                        McMessageOrigin.Module, "INFO", DateTime.Now));
+                case WatcherChangeTypes.Deleted:
+                    RemoveModule(pPath);
+                    break;
+                case WatcherChangeTypes.Created:
+                    AddModule(pPath);
+                    break;
+            }
+        }
+
+        private void RemoveModule(string pPath)
+        {
+            var instance = _loadedDomains.FirstOrDefault(mod => mod.FileName == pPath);
+            var fileName = System.IO.Path.GetFileName(pPath);
+
+            if (instance != null)
+            {
+                try
+                {
+                    instance.Unload();
+                    _loadedDomains.Remove(instance);
+
+                    _messageOut(new McMessage(
+                        string.Format("Removed module: {0}", fileName),
+                            McMessageOrigin.Module, "INFO", DateTime.Now));
+                }
+                catch (CannotUnloadAppDomainException ex)
+                {
+                    _messageOut(new McMessage(
+                        string.Format("Error while attempting to unload app domain for {0}: {1}",fileName, ex.Message),
+                            McMessageOrigin.Module, "ERROR", DateTime.Now));
+                    _messageOut(new McMessage(
+                        string.Format("Detail: {0}", ex.ToString()),
+                            McMessageOrigin.Module, "ERROR", DateTime.Now));
+                }
+                catch (Exception ex) // Remoting exception?
+                {
+                    _messageOut(new McMessage(
+                        string.Format("General error attempting to unload {0}: {1}", fileName, ex.Message),
+                            McMessageOrigin.Module, "ERROR", DateTime.Now));
+                    _messageOut(new McMessage(
+                        string.Format("Detail: {0}", ex.ToString()),
+                            McMessageOrigin.Module, "ERROR", DateTime.Now));
+                    System.Diagnostics.Debugger.Break();
+                }       
             }
         }
 
@@ -211,7 +252,6 @@ namespace McJoeAdmin.Cortex
 
         #region IModuleManager Members
 
-        private List<IMcAdminModule> _modules = new List<IMcAdminModule>();
         public void Subscribe(string pModuleName)
         {
             var callback = OperationContext.Current.GetCallbackChannel<IMcAdminModule>();
@@ -224,6 +264,21 @@ namespace McJoeAdmin.Cortex
                             string.IsNullOrEmpty(pModuleName) ? "NoName" : pModuleName),
                             McMessageOrigin.Module, "INFO", DateTime.Now));
                     _modules.Add(callback);
+                }
+        }
+
+        public void UnSuscribe(string pModuleName)
+        {
+            var callback = OperationContext.Current.GetCallbackChannel<IMcAdminModule>();
+
+            lock (_modules)
+                if (_modules.Contains(callback))
+                {
+                    _messageOut(new McMessage(
+                        string.Format("UnSubscribing module {0}",
+                            string.IsNullOrEmpty(pModuleName) ? "NoName" : pModuleName),
+                            McMessageOrigin.Module, "INFO", DateTime.Now));
+                    _modules.Remove(callback);
                 }
         }
 

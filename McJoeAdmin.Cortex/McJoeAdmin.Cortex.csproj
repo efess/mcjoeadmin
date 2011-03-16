@@ -42,9 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MinecraftServerManager.cs" />
-    <Compile Include="ModuleAssemblyInstance.cs" />
-    <Compile Include="ModuleCollection.cs" />
+    <Compile Include="ModuleInstance.cs" />
     <Compile Include="ModuleManager.cs" />
+    <Compile Include="ModuleState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

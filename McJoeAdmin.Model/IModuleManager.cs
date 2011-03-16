@@ -14,5 +14,8 @@ namespace McJoeAdmin.Model
 
         [OperationContract]
         void MessageOut(McMessage pMessage);
+
+        [OperationContract]
+        void UnSuscribe(string pName);
     }
 }

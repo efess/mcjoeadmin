@@ -43,6 +43,7 @@ namespace McJoeAdmin.DefaultAdminModule
                 serializer.Serialize(xmlWriter, pXmlObject);
             }
         }
+
         private static string GetPath(SimpleXmlStorageObjectBase xmlStorageObject) 
         {
             

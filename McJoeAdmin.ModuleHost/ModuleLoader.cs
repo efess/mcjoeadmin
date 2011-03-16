@@ -10,45 +10,74 @@ namespace McJoeAdmin.ModuleHost
 {
     public class ModuleLoader : MarshalByRefObject
     {
-        private ModuleCollection _currentLoadedModules;
         private string _wcfNamedPipe;
+        private List<IMcAdminModule> _loadedModules;
 
         public ModuleLoader(string pWcfNamedPipe)
         {
             _wcfNamedPipe = pWcfNamedPipe;
-            _currentLoadedModules = new ModuleCollection();
         }
-
 
         public bool TryLoadModule(string pPath, out bool error)
         {
             //var moduleAssemblyInstance new ModuleAssemblyInstance(Assembly.LoadFile(pPath));
             error = false;
+            bool moduleLoaded = false;
 
-            if (AppDomain.CurrentDomain.GetAssemblies().ToList().Find((asm) => asm.Location == pPath) == null
-                && _currentLoadedModules.FirstOrDefault((im) => im.Path == pPath) == null)
+            var adminModuleType = typeof(IMcAdminModule);
+
+            Assembly assembly = Assembly.LoadFrom(pPath);
+            var types = assembly.GetTypes();
+
+            // Find that there is an IMcAdminModule type in this assembly
+            if (types.FirstOrDefault((type) => adminModuleType.IsAssignableFrom(type)
+                                            && !type.IsInterface && !type.IsAbstract) != null)
             {
-                var adminModuleType = typeof(IMcAdminModule);
-
-                Assembly assembly = Assembly.LoadFrom(pPath);
-                var types = assembly.GetTypes();
-
-                // Find that there is an IMcAdminModule type in this assembly
-                if (types.FirstOrDefault((type) => adminModuleType.IsAssignableFrom(type)
-                                             && !type.IsInterface && !type.IsAbstract) != null)
+                try
                 {
-                    try
-                    {
-                        var instance = new ModuleAssemblyInstance(assembly);
-                        foreach (var mod in instance.AdminModules()) { mod.ConnectToLocalhost(_wcfNamedPipe); }
-                        _currentLoadedModules.Add(instance);
+                    LoadTypes(assembly);
+                    foreach (var mod in _loadedModules) { mod.ConnectToLocalhost(_wcfNamedPipe); moduleLoaded = true; }
+                }
+                catch { error = true; return false; } 
+            }
+            
+            return moduleLoaded;
+        }
 
-                        return true;
-                    }
-                    catch { error = true; } 
+        public bool Unload()
+        {
+            foreach (var mod in _loadedModules)
+            {
+                try
+                {
+                    mod.Unloading();
+                }
+                catch
+                {
+                    return false;
                 }
             }
-            return false;
+
+            return true;
+        }
+
+        private void LoadTypes(Assembly pAssembly)
+        {
+            _loadedModules = new List<IMcAdminModule>();
+
+            var adminModuleType = typeof(IMcAdminModule);
+
+            var types = pAssembly.GetTypes();
+
+            foreach(var type in types.Where(type1 => !type1.IsAbstract
+                && !type1.IsInterface
+                && adminModuleType.IsAssignableFrom(type1)
+                && types.FirstOrDefault(type2 => type2 != type1
+                    && type1.IsAssignableFrom(type2)) == null))
+            {
+                var module = Activator.CreateInstance(type);
+                _loadedModules.Add(module as IMcAdminModule);
+            }
         }
     }
 }

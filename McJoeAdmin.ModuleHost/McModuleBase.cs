@@ -44,6 +44,16 @@ namespace McJoeAdmin.ModuleHost
             return new Tuple<string, string>(null, pData);
         }
 
+        public virtual void Unloading()
+        {
+            UnSuscribe();
+        }
+
+        protected virtual void UnSuscribe()
+        {
+            _hostProxy.UnSuscribe(Name);
+        }
+
         public void ConnectToLocalhost(string pPipe)
         {
             _pipe = pPipe;

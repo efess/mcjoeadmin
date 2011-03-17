@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace McJoeAdmin.Model
 {
-    public class McPlayerMessage
+    public class McEngineMessage
     {
         public string Name { get; private set; }
         public bool IsLoggingIn { get; private set; }
@@ -15,7 +15,7 @@ namespace McJoeAdmin.Model
         public string SubMessage { get; private set; }
         public string RawMessage { get; private set; }
 
-        public McPlayerMessage(string pMessage)
+        public McEngineMessage(string pMessage)
         {
             RawMessage = pMessage;
 

@@ -22,7 +22,6 @@ namespace McJoeAdmin.Cortex
         private static FileSystemWatcher _fileSystemWatcher;
         private static ModuleManager _instance;
         
-        private ModuleHost.ModuleLoader _moduleLoader;
         private ServiceHost _serviceHost;
         private ManualResetEvent _shutdownServer = new ManualResetEvent(false);
 
@@ -30,8 +29,8 @@ namespace McJoeAdmin.Cortex
         private Action<McMessage> _messageOut;
         private string _searchPath = string.Empty;
 
-        private List<IMcAdminModule> _modules = new List<IMcAdminModule>();
-        private List<ModuleInstance> _loadedDomains = new List<ModuleInstance>();
+        private List<IMcAdminModule> _moduleCallbacks = new List<IMcAdminModule>();
+        private List<ModuleInstance> _loadedModules = new List<ModuleInstance>();
 
         private ModuleManager(string pPath, Action<McMessage> pMessageOut)
         {
@@ -70,12 +69,17 @@ namespace McJoeAdmin.Cortex
             return _instance;
         }
 
+        internal static void ShutdownInstance()
+        {
+            _instance.UnloadAllModules();
+        }
+
         public void SendMessageToModuleHost(McMessage pMessage)
         {
-            lock(_modules)
-                for(int i = _modules.Count - 1; i >= 0; i--)
+            lock(_moduleCallbacks)
+                for(int i = _moduleCallbacks.Count - 1; i >= 0; i--)
                 {
-                    var module = _modules[i];
+                    var module = _moduleCallbacks[i];
 
                     if (((ICommunicationObject)module).State == CommunicationState.Opened)
                         module.MessageIn(pMessage);
@@ -85,12 +89,12 @@ namespace McJoeAdmin.Cortex
                             string.Format("Module was in {0} State, unloading",
                                 ((ICommunicationObject)module).State.ToString()),
                                 McMessageOrigin.Module, "ERROR",DateTime.Now));
-                        _modules.RemoveAt(i);
+                        _moduleCallbacks.RemoveAt(i);
                     }
                 }
         }
 
-        internal void LoadAllModules()
+        private void LoadAllModules()
         {
             foreach (string str in Directory.GetFiles(
                 Path.GetDirectoryName(
@@ -103,12 +107,24 @@ namespace McJoeAdmin.Cortex
             }
         }
 
+        private void UnloadAllModules()
+        {
+            foreach (var module in _loadedModules)
+            {
+                try
+                {
+                    module.Unload();
+                }
+                catch { }
+            }
+        }
+
         private void AddModule(string pLocation)
         {
             var fileSize = new FileInfo(pLocation).Length;
             var instance = new ModuleInstance(pLocation, fileSize, _wcfNamedPipe);
             
-            if(_loadedDomains.Any(mod => mod.Key == instance.Key))
+            if(_loadedModules.Any(mod => mod.Key == instance.Key))
                 return;
 
             try
@@ -140,7 +156,7 @@ namespace McJoeAdmin.Cortex
                             System.IO.Path.GetFileName(fileName)),
                             McMessageOrigin.Module, "INFO", DateTime.Now));
 
-                    _loadedDomains.Add(pModule);
+                    _loadedModules.Add(pModule);
                     break;
 
                 case ModuleState.LoadError:
@@ -191,7 +207,7 @@ namespace McJoeAdmin.Cortex
 
         private void RemoveModule(string pPath)
         {
-            var instance = _loadedDomains.FirstOrDefault(mod => mod.FileName == pPath);
+            var instance = _loadedModules.FirstOrDefault(mod => mod.FileName == pPath);
             var fileName = System.IO.Path.GetFileName(pPath);
 
             if (instance != null)
@@ -199,7 +215,7 @@ namespace McJoeAdmin.Cortex
                 try
                 {
                     instance.Unload();
-                    _loadedDomains.Remove(instance);
+                    _loadedModules.Remove(instance);
 
                     _messageOut(new McMessage(
                         string.Format("Removed module: {0}", fileName),
@@ -256,14 +272,14 @@ namespace McJoeAdmin.Cortex
         {
             var callback = OperationContext.Current.GetCallbackChannel<IMcAdminModule>();
 
-            lock(_modules)
-                if (!_modules.Contains(callback))
+            lock(_moduleCallbacks)
+                if (!_moduleCallbacks.Contains(callback))
                 {
                     _messageOut(new McMessage(
                         string.Format("Subscribing module {0}",
                             string.IsNullOrEmpty(pModuleName) ? "NoName" : pModuleName),
                             McMessageOrigin.Module, "INFO", DateTime.Now));
-                    _modules.Add(callback);
+                    _moduleCallbacks.Add(callback);
                 }
         }
 
@@ -271,14 +287,14 @@ namespace McJoeAdmin.Cortex
         {
             var callback = OperationContext.Current.GetCallbackChannel<IMcAdminModule>();
 
-            lock (_modules)
-                if (_modules.Contains(callback))
+            lock (_moduleCallbacks)
+                if (_moduleCallbacks.Contains(callback))
                 {
                     _messageOut(new McMessage(
                         string.Format("UnSubscribing module {0}",
                             string.IsNullOrEmpty(pModuleName) ? "NoName" : pModuleName),
                             McMessageOrigin.Module, "INFO", DateTime.Now));
-                    _modules.Remove(callback);
+                    _moduleCallbacks.Remove(callback);
                 }
         }
 

@@ -15,6 +15,7 @@ namespace McJoeAdmin.DefaultAdminModule
         // State vars
         private List<string> _currentPlayers;
         private LogonMessages _logonMessages;
+        private bool _shuttingDown;
 
         public DefaultAdminModule()
         {
@@ -45,43 +46,47 @@ namespace McJoeAdmin.DefaultAdminModule
             {
                 if(pMessage.Data == Constants.SPECIAL_MESSAGE_DATA_SHUTDOWN)
                 {
+                    _shuttingDown = true;
                     SendMessage("save-all");
-                    SendMessage("stop");
                 }
                 return null;
             }
 
-            var playerMessage = new McPlayerMessage(pMessage.Data);
+            var engineMessage = new McEngineMessage(pMessage.Data);
 
-            if (playerMessage.IsLoggingIn)
+            if (engineMessage.IsLoggingIn)
             {
-                SendWelcomeMessage(playerMessage.Name);
-                SendOfflineMessages(playerMessage);
+                SendWelcomeMessage(engineMessage.Name);
+                SendOfflineMessages(engineMessage);
                 SendMessage("list");
             }
 
-            if (playerMessage.Name == null)
+            if (engineMessage.Name == null)
             {
                 // Not a player message
-                if (playerMessage.RawMessage.StartsWith("Connected players: "))
+                if (engineMessage.RawMessage.StartsWith("Connected players: "))
                 {
-                    ParsePlayers(playerMessage.RawMessage.Remove(0, 19));
+                    ParsePlayers(engineMessage.RawMessage.Remove(0, 19));
                 }
                 else if (pMessage.Data.Contains("lost connection")
                     || pMessage.Data.Contains("logged in with"))
                 {
                     SendMessage("list");
                 }
+                else if (pMessage.Data.StartsWith("CONSOLE: Save complete.") && _shuttingDown)
+                {
+                    SendMessage("stop");
+                }
             }
-            else if(playerMessage.Command != null)
+            else if(engineMessage.Command != null)
             {
-                switch (playerMessage.Command.ToUpper())
+                switch (engineMessage.Command.ToUpper())
                 {
                     case "!OFFLINEMSG":
-                        AddAfkMessage(playerMessage);
+                        AddAfkMessage(engineMessage);
                         break;
                     case "!PLAYERS":
-                        SendPlayerList(playerMessage.Name);
+                        SendPlayerList(engineMessage.Name);
                         SendMessage("list");
                         break;
                     case "!DERP":
@@ -105,7 +110,7 @@ namespace McJoeAdmin.DefaultAdminModule
             SendMessage(string.Format("tell {0} Wiki: mcdev.myxwiki.org", pPlayerName));
         }
 
-        private void SendOfflineMessages(McPlayerMessage pMessage)
+        private void SendOfflineMessages(McEngineMessage pMessage)
         {
             bool hasMsg = false;
             var messages = _logonMessages.GetMessages(pMessage.Name).ToArray();
@@ -123,7 +128,7 @@ namespace McJoeAdmin.DefaultAdminModule
             }
         }
 
-        private void AddAfkMessage(McPlayerMessage pData)
+        private void AddAfkMessage(McEngineMessage pData)
         {
             //!addafkmsg john hey whats up
             var sender = pData.Name;

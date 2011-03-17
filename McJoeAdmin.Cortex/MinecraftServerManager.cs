@@ -26,25 +26,17 @@ namespace McJoeAdmin.Cortex
             if (pServer == null)
                 throw new ArgumentNullException("pMinecraft");
 
-            _serverInstance = pServer;
             _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location),
                 (mcm) => RouteMessage(mcm));
+
             //_packetTunnel = new PacketTunnel(25566, 25567);
         }
 
         public Action<McMessage> ConsoleOut;
 
-        private const string TEST_EXE =
-            @"DummyConsole.exe";
-
         public MinecraftServerManager(string pExe, string[] pArgs, string pStartupFolder)
+            : this(new McProcess(pExe, pArgs, pStartupFolder))
         {
-            // TODO: Testing for now.
-            _serverInstance = new McProcess(pExe, pArgs, pStartupFolder);
-            _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location),
-                (mcm) => RouteMessage(mcm));
-
-            //_packetTunnel = new PacketTunnel(25566, 25567);
         }
 
         public void StartServer()
@@ -103,7 +95,9 @@ namespace McJoeAdmin.Cortex
 
 
             System.Threading.Thread.Sleep(WAIT_PERIOD_SHUTDOWN);
-                
+            
+            ModuleManager.ShutdownInstance();
+            
             _serverInstance.Close();
         }
 

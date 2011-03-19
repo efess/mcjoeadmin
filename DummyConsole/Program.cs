@@ -93,13 +93,13 @@ namespace DummyConsole
             switch (number)
             {
                 case 0:
-                    return GetMcDateTimeNow() + " [INFO] <efess> Lol message";
+                    return GetMcDateTimeNow() + " [INFO] <efess> !torches 3";
 
                 case 2:
                     return GetMcDateTimeNow() + " [INFO] <efess> !players";
 
                 case 3:
-                    return GetMcDateTimeNow() + " [INFO] <efess> !memory";
+                    return GetMcDateTimeNow() + " [INFO] <efess> !torches 4.5";
                 case 4:
                     return GetMcDateTimeNow() + " [INFO] <efess> !lol";
                 case 5:
@@ -108,7 +108,7 @@ namespace DummyConsole
                 case 6:
                     return GetMcDateTimeNow() + " [INFO] efess [/69.119.8.191:49613] logged in with entity id 3732147";
                 case 7:
-                    return GetMcDateTimeNow() + " [INFO] <efess> !coffee";
+                    return GetMcDateTimeNow() + " [INFO] <efess> !tracks 31";
                 case 8:
                     return GetMcDateTimeNow() + " [INFO] Disconnecting redux06790 [/69.119.8.191:49714]: Took too long to log in";
                 case 9:

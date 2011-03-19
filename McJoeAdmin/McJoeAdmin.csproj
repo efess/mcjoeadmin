@@ -47,6 +47,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\Graph.cs" />
+    <Compile Include="Controls\GraphSample.cs" />
+    <Compile Include="Controls\LineGraph.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -72,6 +72,12 @@ namespace McJoeAdmin
 
         private void SetServerInformationToPanel(ServerInformation pServerInformation)
         {
+            float cpuParse = 0;
+            if(float.TryParse(pServerInformation.CpuUsage, out cpuParse))
+                cpuGraph.AddSample(new McJoeAdmin.Controls.GraphSample(DateTime.Now.Ticks, (int)cpuParse));
+            float memParse = 0;
+            if (float.TryParse(pServerInformation.MemoryUsage, out memParse))
+                memGraph.AddSample(new McJoeAdmin.Controls.GraphSample(DateTime.Now.Ticks, (int)memParse));
             lblCpuUsage.Text = pServerInformation.CpuUsage + "%";
             lblMemoryUsage.Text = pServerInformation.MemoryUsage + "MB";
             lblStartString.Text = pServerInformation.StartupString;

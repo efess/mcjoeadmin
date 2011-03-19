@@ -48,9 +48,15 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.txtConsoleInput = new System.Windows.Forms.TextBox();
             this.btnSendInput = new System.Windows.Forms.Button();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.cpuGraph = new McJoeAdmin.Controls.LineGraph();
+            this.memGraph = new McJoeAdmin.Controls.LineGraph();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -62,6 +68,16 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridConsoleOut)).BeginInit();
             this.panel1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -96,7 +112,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.groupBox2);
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer3);
             // 
             // splitContainer1.Panel2
             // 
@@ -114,10 +130,10 @@
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.lblMemory);
             this.groupBox2.Controls.Add(this.lblStartString);
-            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox2.Location = new System.Drawing.Point(0, 94);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox2.Location = new System.Drawing.Point(0, 0);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(750, 77);
+            this.groupBox2.Size = new System.Drawing.Size(750, 82);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Server Information";
@@ -271,16 +287,6 @@
             this.btnSendInput.Text = "Send Input";
             this.btnSendInput.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
-            // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(756, 476);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Players";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -295,6 +301,98 @@
             // 
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(0, 17);
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(756, 476);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Players";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.groupBox3);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.groupBox4);
+            this.splitContainer2.Size = new System.Drawing.Size(750, 85);
+            this.splitContainer2.SplitterDistance = 345;
+            this.splitContainer2.TabIndex = 2;
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.splitContainer2);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.groupBox2);
+            this.splitContainer3.Size = new System.Drawing.Size(750, 171);
+            this.splitContainer3.SplitterDistance = 85;
+            this.splitContainer3.TabIndex = 3;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.cpuGraph);
+            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox3.Location = new System.Drawing.Point(0, 0);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(345, 85);
+            this.groupBox3.TabIndex = 2;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "CPU Graph";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.memGraph);
+            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox4.Location = new System.Drawing.Point(0, 0);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(401, 85);
+            this.groupBox4.TabIndex = 1;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Memory Graph";
+            // 
+            // cpuGraph
+            // 
+            this.cpuGraph.BackgroundColor = System.Drawing.Color.White;
+            this.cpuGraph.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cpuGraph.LineColor = System.Drawing.Color.SteelBlue;
+            this.cpuGraph.Location = new System.Drawing.Point(3, 16);
+            this.cpuGraph.MaximumValue = ((long)(100));
+            this.cpuGraph.MinimumValue = ((long)(0));
+            this.cpuGraph.Name = "cpuGraph";
+            this.cpuGraph.Size = new System.Drawing.Size(339, 66);
+            this.cpuGraph.TabIndex = 1;
+            this.cpuGraph.Text = "lineGraph1";
+            // 
+            // memGraph
+            // 
+            this.memGraph.BackgroundColor = System.Drawing.Color.White;
+            this.memGraph.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.memGraph.LineColor = System.Drawing.Color.LimeGreen;
+            this.memGraph.Location = new System.Drawing.Point(3, 16);
+            this.memGraph.MaximumValue = ((long)(1024));
+            this.memGraph.MinimumValue = ((long)(0));
+            this.memGraph.Name = "memGraph";
+            this.memGraph.Size = new System.Drawing.Size(395, 66);
+            this.memGraph.TabIndex = 0;
             // 
             // Main
             // 
@@ -320,6 +418,16 @@
             this.panel1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -349,6 +457,12 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn colData;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lblStatus;
+        private Controls.LineGraph cpuGraph;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private Controls.LineGraph memGraph;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox groupBox4;
     }
 }
 

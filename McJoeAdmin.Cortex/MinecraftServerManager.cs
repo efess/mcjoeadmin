@@ -26,6 +26,7 @@ namespace McJoeAdmin.Cortex
             if (pServer == null)
                 throw new ArgumentNullException("pMinecraft");
 
+            _serverInstance = pServer;
             _moduleManager = ModuleManager.GetInstance(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location),
                 (mcm) => RouteMessage(mcm));
 

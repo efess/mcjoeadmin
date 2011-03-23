@@ -84,13 +84,10 @@ namespace McJoeAdmin.Controls
                 if (rangeMax <= rangeMin)
                     rangeMax = rangeMin + 1;
 
-
-
                 var bitmap = new Bitmap(size.Width, size.Height, graphics);
-                bitmap.MakeTransparent();
                 var bitmapGraphic = Graphics.FromImage(bitmap);
-
-                var multiplier = (float)(size.Height- 1) / (float)(rangeMax - rangeMin);
+                
+                var multiplier = (float)(size.Height - 1) / (float)(rangeMax - rangeMin);
                 var enumerator = _samples.OrderByDescending(sample => sample.XValue).GetEnumerator();
                 using (var pen = new Pen(new SolidBrush(LineColor), 1))
                 {
@@ -102,8 +99,14 @@ namespace McJoeAdmin.Controls
                 }
                 bitmapGraphic.Flush();
 
-                graphics.Clear(_backgroundColor);
-                graphics.DrawImage(bitmap, new Point(_padding, _padding));
+                try
+                {
+                    graphics.Clear(_backgroundColor);
+                    graphics.DrawImage(bitmap, new Point(_padding, _padding));
+                }
+                catch (Exception ex)
+                {
+                }
             }
 
             base.OnPaint(e);

@@ -10,8 +10,30 @@ namespace DummyConsole
     public class Program
     {
         static ManualResetEvent waitHandle = new ManualResetEvent(false);
+        static string[] _outputLines;
         static void Main(string[] args)
         {
+            _outputLines = new string[]
+            {
+                "[INFO] <efess> !torches 3",
+                "[INFO] <efess> !players",
+                "[INFO] <efess> !torches 4.5",
+                "[INFO] <efess> !lol",
+                "[WARNING] Can't keep up! Did the system time change, or is the server overloaded?",
+                "[INFO] efess [/69.119.8.191:49613] logged in with entity id 3732147",
+                "[INFO] <efess> !tracks 31",
+                "[INFO] Disconnecting redux06790 [/69.119.8.191:49714]: Took too long to log in",
+                "[INFO] <redux06790> !mitch",
+                "[INFO] redux06790 lost connection: disconnect.quitting",
+                "[INFO] efess [/69.119.7.235:31007] logged in with entity id 1",
+                "[INFO] <efess> !offlinemsg john hey whats up",
+                "[INFO] <kevin> !offlinemsg john -- hey whats up",
+                "[INFO] <kevin> !offlinemsg efess -- lolz.",
+                "[INFO] <kevin> !calc (10+3)/3",
+                "[INFO] <kevin> !calc 10243/64",
+                "[INFO] <kevin> !calc 8^2 * 3 / (4+4) "
+            };
+
             var read = new Thread(Read)
             {
                 IsBackground = true
@@ -87,43 +109,14 @@ namespace DummyConsole
         private static string RandomMinecraftString()
         {
             Random rand = new Random((int)(DateTime.Now.Ticks % int.MaxValue));
-            
-            int number = rand.Next(0, 15);
 
-            switch (number)
+            int number = rand.Next(0, _outputLines.Length);
+
+            if (number < _outputLines.Length && number >= 0)
             {
-                case 0:
-                    return GetMcDateTimeNow() + " [INFO] <efess> !torches 3";
-
-                case 2:
-                    return GetMcDateTimeNow() + " [INFO] <efess> !players";
-
-                case 3:
-                    return GetMcDateTimeNow() + " [INFO] <efess> !torches 4.5";
-                case 4:
-                    return GetMcDateTimeNow() + " [INFO] <efess> !lol";
-                case 5:
-                    return GetMcDateTimeNow() + " [WARNING] Can't keep up! Did the system time change, or is the server overloaded?";
-
-                case 6:
-                    return GetMcDateTimeNow() + " [INFO] efess [/69.119.8.191:49613] logged in with entity id 3732147";
-                case 7:
-                    return GetMcDateTimeNow() + " [INFO] <efess> !tracks 31";
-                case 8:
-                    return GetMcDateTimeNow() + " [INFO] Disconnecting redux06790 [/69.119.8.191:49714]: Took too long to log in";
-                case 9:
-                    return GetMcDateTimeNow() + " [INFO] <redux06790> !mitch";
-                case 10:
-                    return GetMcDateTimeNow() + " [INFO] redux06790 lost connection: disconnect.quitting";
-                case 11:
-                    return GetMcDateTimeNow() + " [INFO] efess [/69.119.7.235:31007] logged in with entity id 1";
-                case 12:
-                    return GetMcDateTimeNow() + " [INFO] <efess> !offlinemsg john hey whats up";
-                case 13:
-                    return GetMcDateTimeNow() + " [INFO] <kevin> !offlinemsg john -- hey whats up";
-                case 14:
-                    return GetMcDateTimeNow() + " [INFO] <kevin> !offlinemsg efess -- lolz.";
+                return string.Format("{0} {1}",GetMcDateTimeNow(), _outputLines[number]);;
             }
+
             return null;
         }
 

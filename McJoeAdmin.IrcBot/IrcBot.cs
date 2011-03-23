@@ -27,8 +27,6 @@ namespace McJoeAdmin.IrcBot
 
         public IrcBot()
         {
-            AppDomain.CurrentDomain.DomainUnload += (sender, e) => UnloadAppDomain();
-            
             _config = ConfigurationManager.GetSection("IrcBotConfig") as IrcBotConfig;
 
             InitializeClient();
@@ -59,14 +57,16 @@ namespace McJoeAdmin.IrcBot
             _isListening = false;
         }
 
-        private void UnloadAppDomain()
+        public override void Unloading()
         {
             _updateTimer.Enabled = false;
 
-            if(_ircClient.IsConnected)
+            if (_ircClient.IsConnected)
                 _ircClient.Disconnect();
 
             _ircClient = null;
+
+            base.Unloading();
         }
 
 
@@ -112,7 +112,7 @@ namespace McJoeAdmin.IrcBot
             if (!_ircClient.IsConnected)
                 return;
 
-            var playerMessage = new McPlayerMessage(pMessage.Data);
+            var playerMessage = new McEngineMessage(pMessage.Data);
             if(!string.IsNullOrEmpty(playerMessage.Name))
             {
                 _ircClient.SendMessage(SendType.Message, _config.Channel, pMessage.Data);

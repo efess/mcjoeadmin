@@ -5,6 +5,7 @@ using System.Text;
 using System.ServiceModel;
 using McJoeAdmin.ModuleHost;
 using McJoeAdmin.Model;
+using NCalc;
 
 namespace McJoeAdmin.MaterialCalculator
 {
@@ -52,10 +53,25 @@ namespace McJoeAdmin.MaterialCalculator
                     case "!BRICKS":
                         BookshelvesCalc(message.SubMessage, message.Name);
                         break;
+                    case "!CALC":
+                        DoStringCalc(message.SubMessage, message.Name);
+                        break;
                 }
             }
         }
-
+        private void DoStringCalc(string pParms, string pName)
+        {
+            try
+            {
+                var expression = new Expression(pParms);
+                var evald = expression.Evaluate();
+                SendMessage(string.Format("say Result: {0}", evald.ToString()));
+            }
+            catch
+            {
+                SendMessage(string.Format("tell {0} Sorry, can't evaluate that.", pName));
+            }
+        }
 
         private void BookshelvesCalc(string pParms, string pName)
         {

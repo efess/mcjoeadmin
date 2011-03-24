@@ -88,7 +88,7 @@ namespace McJoeAdmin.Cortex
                         _messageOut(new McMessage(
                             string.Format("Module was in {0} State, unloading",
                                 ((ICommunicationObject)module).State.ToString()),
-                                McMessageOrigin.Module, "ERROR",DateTime.Now));
+                                McMessageOrigin.ModuleManager, "ERROR",DateTime.Now));
                         _moduleCallbacks.RemoveAt(i);
                     }
                 }
@@ -154,7 +154,7 @@ namespace McJoeAdmin.Cortex
                     _messageOut(new McMessage(
                         string.Format("Adding Assembly {0}",
                             System.IO.Path.GetFileName(fileName)),
-                            McMessageOrigin.Module, "INFO", DateTime.Now));
+                            McMessageOrigin.ModuleManager, "INFO", DateTime.Now));
 
                     _loadedModules.Add(pModule);
                     break;
@@ -163,14 +163,14 @@ namespace McJoeAdmin.Cortex
                     _messageOut(new McMessage(
                         string.Format("Error while attempting to add Assembly {0}",
                             System.IO.Path.GetFileName(fileName)),
-                            McMessageOrigin.Module, "INFO", DateTime.Now));
+                            McMessageOrigin.ModuleManager, "INFO", DateTime.Now));
                     break;
 
                 default:
                     _messageOut(new McMessage(
                         string.Format("No module types in Assembly {0}",
                             System.IO.Path.GetFileName(fileName)),
-                            McMessageOrigin.Module, "INFO", DateTime.Now));
+                            McMessageOrigin.ModuleManager, "INFO", DateTime.Now));
                     break;
             }
         }
@@ -219,25 +219,25 @@ namespace McJoeAdmin.Cortex
 
                     _messageOut(new McMessage(
                         string.Format("Removed module: {0}", fileName),
-                            McMessageOrigin.Module, "INFO", DateTime.Now));
+                            McMessageOrigin.ModuleManager, "INFO", DateTime.Now));
                 }
                 catch (CannotUnloadAppDomainException ex)
                 {
                     _messageOut(new McMessage(
                         string.Format("Error while attempting to unload app domain for {0}: {1}",fileName, ex.Message),
-                            McMessageOrigin.Module, "ERROR", DateTime.Now));
+                            McMessageOrigin.ModuleManager, "ERROR", DateTime.Now));
                     _messageOut(new McMessage(
                         string.Format("Detail: {0}", ex.ToString()),
-                            McMessageOrigin.Module, "ERROR", DateTime.Now));
+                            McMessageOrigin.ModuleManager, "ERROR", DateTime.Now));
                 }
                 catch (Exception ex) // Remoting exception?
                 {
                     _messageOut(new McMessage(
                         string.Format("General error attempting to unload {0}: {1}", fileName, ex.Message),
-                            McMessageOrigin.Module, "ERROR", DateTime.Now));
+                            McMessageOrigin.ModuleManager, "ERROR", DateTime.Now));
                     _messageOut(new McMessage(
                         string.Format("Detail: {0}", ex.ToString()),
-                            McMessageOrigin.Module, "ERROR", DateTime.Now));
+                            McMessageOrigin.ModuleManager, "ERROR", DateTime.Now));
                     System.Diagnostics.Debugger.Break();
                 }       
             }
@@ -278,7 +278,7 @@ namespace McJoeAdmin.Cortex
                     _messageOut(new McMessage(
                         string.Format("Subscribing module {0}",
                             string.IsNullOrEmpty(pModuleName) ? "NoName" : pModuleName),
-                            McMessageOrigin.Module, "INFO", DateTime.Now));
+                            McMessageOrigin.ModuleManager, "INFO", DateTime.Now));
                     _moduleCallbacks.Add(callback);
                 }
         }
@@ -293,7 +293,7 @@ namespace McJoeAdmin.Cortex
                     _messageOut(new McMessage(
                         string.Format("UnSubscribing module {0}",
                             string.IsNullOrEmpty(pModuleName) ? "NoName" : pModuleName),
-                            McMessageOrigin.Module, "INFO", DateTime.Now));
+                            McMessageOrigin.ModuleManager, "INFO", DateTime.Now));
                     _moduleCallbacks.Remove(callback);
                 }
         }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using McJoeAdmin.Model;
 using McJoeAdmin.Model.Events;
+using System.Runtime.Remoting.Lifetime;
 
 namespace McJoeAdmin.ModuleHost
 {
@@ -16,6 +17,19 @@ namespace McJoeAdmin.ModuleHost
         public ModuleLoader(string pWcfNamedPipe)
         {
             _wcfNamedPipe = pWcfNamedPipe;
+        }
+
+        public override object InitializeLifetimeService()
+        {
+            ILease lease = base.InitializeLifetimeService() as ILease;
+
+            if (lease.CurrentState == LeaseState.Initial)
+            {
+                lease.InitialLeaseTime = new TimeSpan(365, 0, 0, 0, 0); // One year.... should be enough?
+                lease.RenewOnCallTime = new TimeSpan(365, 0, 0, 0, 0); // One year.... should be enough?
+            }
+
+            return lease;
         }
 
         public bool TryLoadModule(string pPath, out bool error)

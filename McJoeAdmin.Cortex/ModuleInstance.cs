@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using McJoeAdmin.Model;
 using McJoeAdmin.ModuleHost;
+using System.Runtime.Remoting.Lifetime;
 
 namespace McJoeAdmin.Cortex
 {
@@ -54,7 +55,6 @@ namespace McJoeAdmin.Cortex
                 new object[] { _wcfPipe },
                 null,
                 null) as ModuleHost.ModuleLoader;
-
             
             bool error;
             if (_loader.TryLoadModule(FileName, out error))

@@ -101,7 +101,8 @@ namespace McJoeAdmin.Controls
 
                 try
                 {
-                    graphics.Clear(_backgroundColor);
+
+                    //graphics.Clear(_backgroundColor);
                     graphics.DrawImage(bitmap, new Point(_padding, _padding));
                 }
                 catch (Exception ex)

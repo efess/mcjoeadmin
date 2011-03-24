@@ -7,6 +7,7 @@ namespace McJoeAdmin.Model
 {
     public enum McMessageOrigin
     {
+        ModuleManager,
         ServerManager,
         ServerProcess,
         View,

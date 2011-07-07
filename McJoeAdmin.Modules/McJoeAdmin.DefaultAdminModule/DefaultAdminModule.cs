@@ -6,21 +6,31 @@ using McJoeAdmin.Model;
 using McJoeAdmin.DefaultAdminModule.XmlObjects;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System;
 
 namespace McJoeAdmin.DefaultAdminModule
 {
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant)]
     public class DefaultAdminModule : McModuleBase
     {
+        // Fkn Hardcoded command list
+        private List<SupportedUserCommand> _supportedUserCommands;
+
         // State vars
         private List<string> _currentPlayers;
         private LogonMessages _logonMessages;
+        private UserPrivilages _userPrivilages;
+
+        // TODO: Make this configurable
+        private Privilage _defaultPrivilage = Privilage.User; 
+        
         private bool _shuttingDown;
 
         public DefaultAdminModule()
         {
             _currentPlayers = new List<string>();
-            _logonMessages = LogonMessages.LoadInstance();
+            _logonMessages = SimpleXmlStorage.Load<LogonMessages>() ?? new LogonMessages();
+            InitializeSupportedUserCommands();
         }
 
         public override string Name
@@ -58,7 +68,7 @@ namespace McJoeAdmin.DefaultAdminModule
             {
                 SendWelcomeMessage(engineMessage.Name);
                 SendOfflineMessages(engineMessage);
-                SendMessage("list");
+                RefreshState();
             }
 
             if (engineMessage.Name == null)
@@ -71,7 +81,7 @@ namespace McJoeAdmin.DefaultAdminModule
                 else if (pMessage.Data.Contains("lost connection")
                     || pMessage.Data.Contains("logged in with"))
                 {
-                    SendMessage("list");
+                    RefreshState();
                 }
                 else if (pMessage.Data.StartsWith("CONSOLE: Save complete.") && _shuttingDown)
                 {
@@ -80,28 +90,52 @@ namespace McJoeAdmin.DefaultAdminModule
             }
             else if(engineMessage.Command != null)
             {
-                switch (engineMessage.Command.ToUpper())
-                {
-                    case "!OFFLINEMSG":
-                        AddAfkMessage(engineMessage);
-                        break;
-                    case "!PLAYERS":
-                        SendPlayerList(engineMessage.Name);
-                        SendMessage("list");
-                        break;
-                    case "!DERP":
-                        SendMessage("say Derpy derp. De derp de duttidy da, derpy derpy doo.");
-                        break;
-                    case "!NIGGER":
-                        SendMessage("say A fully grown niglet");
-                        break;
-                    case "!BOOBS":
-                        SendMessage("sa Things that guys like to play with");
-                        break;
-                }
+                var privilage = _userPrivilages.LookupPrivilage(engineMessage.Name)
+                    ?? _defaultPrivilage;
+
+                ProcessUserMessage(engineMessage, privilage);
             }
 
             return null;
+        }
+
+        private void ProcessUserMessage(McEngineMessage pMessage, Privilage pUserPrivilage)
+        {
+            foreach(var commandWrapper in _supportedUserCommands.Where(sc => pUserPrivilage >= sc.PrivilageRequired 
+                && string.Compare(pMessage.Command, sc.CommandName, true) == 0))
+            {
+                commandWrapper.Command(pMessage);
+            }
+                
+
+            //switch (pMessage.Command.ToUpper())
+            //{
+            //    case "!OFFLINEMSG":
+            //        AddAfkMessage(pMessage);
+            //        break;
+            //    case "!PLAYERS":
+            //        SendPlayerList(pMessage);
+            //        break;
+            //    case "!DERP":
+            //        SendMessage("say Derpy derp. De derp de duttidy da, derpy derpy doo.");
+            //        break;
+            //    case "!NIGGER":
+            //        SendMessage("say A fully grown niglet");
+            //        break;
+            //    case "!BOOBS":
+            //        SendMessage("say Things that guys like to play with");
+            //        break;
+            //}
+        }
+
+        private void InitializeSupportedUserCommands()
+        {
+            var sc = _supportedUserCommands;
+            sc.Add(new SupportedUserCommand(Privilage.None, "!nigger", "Dirty Mouth", new Action<McEngineMessage>((m)=> SendMessage("say A fully grown niglet"))));
+            sc.Add(new SupportedUserCommand(Privilage.None, "!boobs", "Dirty Mouth", new Action<McEngineMessage>((m) => SendMessage("say Things that guys like to play with"))));
+            sc.Add(new SupportedUserCommand(Privilage.None, "!boobs", "Dirty Mouth", new Action<McEngineMessage>((m) => SendMessage("say Derpy derp. De derp de duttidy da, derpy derpy doo."))));
+            sc.Add(new SupportedUserCommand(Privilage.None, "!offlinemsg", "Send an offline message to a user", new Action<McEngineMessage>(AddAfkMessage)));
+            sc.Add(new SupportedUserCommand(Privilage.None, "!players", "View list of connected players", new Action<McEngineMessage>(SendPlayerList)));
         }
 
         private void SendWelcomeMessage(string pPlayerName)
@@ -124,7 +158,7 @@ namespace McJoeAdmin.DefaultAdminModule
             if (hasMsg)
             {
                 _logonMessages.RemoveMessages(pMessage.Name);
-                _logonMessages.Save();
+                SimpleXmlStorage.Save(_logonMessages);
             }
         }
 
@@ -141,7 +175,7 @@ namespace McJoeAdmin.DefaultAdminModule
             if (groups.Count == 3)
             {
                 _logonMessages.AddMessage(sender, groups[1].Value.Trim(), groups[2].Value.Trim());
-                _logonMessages.Save();
+                SimpleXmlStorage.Save(_logonMessages);
                 SendMessage(string.Format("tell {0} Offline Message to {1} saved", sender, groups[1].Value.Trim()));
             }
             else
@@ -163,14 +197,17 @@ namespace McJoeAdmin.DefaultAdminModule
             }
         }
 
-        public void SendPlayerList(string pPlayer)
+        public void SendPlayerList(McEngineMessage pMessage)
         {
-            SendMessage("tell " + pPlayer + " Current Players:");
+            var player = pMessage.Name;
+            SendMessage("tell " + player + " Current Players:");
 
             for(int i = 0; i < _currentPlayers.Count; i++)
             {
-                SendMessage("tell " + pPlayer + " " + i + " " + _currentPlayers[i]);
+                SendMessage("tell " + player + " " + i + " " + _currentPlayers[i]);
             }
+            
+            RefreshState();
         }
 
         public void RefreshState()

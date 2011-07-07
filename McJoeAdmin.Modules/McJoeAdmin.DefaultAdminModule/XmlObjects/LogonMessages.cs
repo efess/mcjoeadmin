@@ -9,7 +9,7 @@ namespace McJoeAdmin.DefaultAdminModule.XmlObjects
     [XmlRoot()]
     public class LogonMessages : SimpleXmlStorageObjectBase
     {
-        public const string XML_FILE = "LogonMessages.xml";
+        private const string XML_FILE = "LogonMessages.xml";
 
         internal override string XmlFile
         {
@@ -37,18 +37,9 @@ namespace McJoeAdmin.DefaultAdminModule.XmlObjects
                 {
                     MessagesCollection.Remove(dups[i]);
                 }
-
             }
 
             MessagesCollection.Add(newMessage);
-        }
-
-        public static LogonMessages LoadInstance()
-        {
-            var messages = SimpleXmlStorage.Load<LogonMessages>();
-            if (messages == null)
-                messages = new LogonMessages();
-            return messages;
         }
 
         public IEnumerable<LogonMessage> GetMessages(string pTo)
@@ -64,11 +55,6 @@ namespace McJoeAdmin.DefaultAdminModule.XmlObjects
             lock(MessagesCollection)
                 foreach(var message in MessagesCollection.Where(msg => string.Compare(msg.To, pTo, true) == 0).ToArray())
                     MessagesCollection.Remove(message);
-        }
-
-        public void Save()
-        {
-            SimpleXmlStorage.Save(this);
         }
     }
 }

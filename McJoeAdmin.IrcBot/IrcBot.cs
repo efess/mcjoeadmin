@@ -123,6 +123,7 @@ namespace McJoeAdmin.IrcBot
         {
             if (_updateTimer != null)
                 _updateTimer.Enabled = false;
+
             if (_ircClient != null)
             {
                 if (_ircClient.IsConnected)
@@ -130,6 +131,5 @@ namespace McJoeAdmin.IrcBot
                 _ircClient = null;
             }
         }
-
     }
 }

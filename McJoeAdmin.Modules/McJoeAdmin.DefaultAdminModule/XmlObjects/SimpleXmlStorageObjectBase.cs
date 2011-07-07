@@ -16,6 +16,7 @@ namespace McJoeAdmin.DefaultAdminModule.XmlObjects
         {
 
         }
+
         private void EnsureFileExists()
         {
             if(!System.IO.File.Exists(_xmlFile))

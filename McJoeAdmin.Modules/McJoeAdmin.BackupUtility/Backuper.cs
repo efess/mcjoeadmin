@@ -25,5 +25,10 @@ namespace McJoeAdmin.BackupUtility
         {
             
         }
+
+        public void SendMessage(string pMessage)
+        {
+
+        }
     }
 }

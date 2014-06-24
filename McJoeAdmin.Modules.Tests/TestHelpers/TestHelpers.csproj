@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2C9A9185-0E41-481C-B723-3CCAA6985F9F}</ProjectGuid>
+    <ProjectGuid>{BFB03438-2A4C-4E5B-B7FF-340CCCA075EB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>McJoeAdmin.RandomOneLiners</RootNamespace>
-    <AssemblyName>McJoeAdmin.RandomOneLiners</AssemblyName>
+    <RootNamespace>TestHelpers</RootNamespace>
+    <AssemblyName>TestHelpers</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\BuildResults\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\BuildResults\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -33,8 +33,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,27 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MitchHedberg.cs" />
-    <Compile Include="OneLinerList.cs" />
-    <Compile Include="OneLiners.cs" />
+    <Compile Include="ReflectionUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TooMuchCoffee.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\McJoeAdmin.Model\McJoeAdmin.Model.csproj">
-      <Project>{D0D243E6-C32F-4F9C-886E-1D3436DB3F00}</Project>
-      <Name>McJoeAdmin.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\McJoeAdmin.ModuleHost\McJoeAdmin.ModuleHost.csproj">
-      <Project>{EB9395D8-0D59-4F50-90BF-46502F5C96C3}</Project>
-      <Name>McJoeAdmin.ModuleHost</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
